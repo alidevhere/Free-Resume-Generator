@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 30px;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .item-card {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .item-card.empty-state {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+
+        .item-card .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .item-card .remove-btn:hover {
+            background: #ff3838;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-generate {
+            background: #26de81;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+        }
+
+        .btn-generate:hover {
+            background: #20c997;
+            transform: translateY(-2px);
+        }
+
+        .btn-generate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+        }
+
+        .btn-pdf {
+            background: #ee5a6f;
+            color: white;
+        }
+
+        .btn-pdf:hover {
+            background: #ff4757;
+        }
+
+        .btn-latex {
+            background: #1e90ff;
+            color: white;
+        }
+
+        .btn-latex:hover {
+            background: #0073e6;
+        }
+
+        .array-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .array-input input {
+            flex: 1;
+        }
+
+        .array-input button {
+            padding: 8px 15px;
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .array-input button:hover {
+            background: #ee5a6f;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 999;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: #26de81;
+        }
+
+        .toast.error {
+            background: #ff4757;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Resume Generator</h1>
+            <p>Fill in your details and generate your professional resume</p>
+        </div>
+
+        <div class="content">
+            <form id="resumeForm">
+                <!-- Personal Information -->
+                <div class="section">
+                    <h2 class="section-title">👤 Personal Information</h2>
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="name" required placeholder="John Doe">
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="email" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" id="phone" placeholder="+1 (555) 123-4567">
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Website</label>
+                            <input type="url" id="website" placeholder="yourwebsite.com">
+                        </div>
+                        <div class="form-group">
+                            <label>GitHub</label>
+                            <input type="text" id="github" placeholder="yourgithub">
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>LinkedIn</label>
+                            <input type="text" id="linkedin" placeholder="yourlinkedin">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="section">
+                    <h2 class="section-title">📝 Summary</h2>
+                    <div class="form-group">
+                        <label>Professional Summary</label>
+                        <textarea id="summary" placeholder="Brief overview of your professional background..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Template -->
+                <div class="section">
+                    <h2 class="section-title">🧩 Resume Template</h2>
+                    <div class="form-group">
+                        <label for="template">Template</label>
+                        <select id="template">
+                            <option value="enhanced-faang-resume" selected>Enhanced FAANG Resume</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Experience -->
+                <div class="section">
+                    <h2 class="section-title">💼 Experience</h2>
+                    <div id="experienceList"></div>
+                    <button type="button" class="btn-add" onclick="addExperience()">+ Add Experience</button>
+                </div>
+
+                <!-- Education -->
+                <div class="section">
+                    <h2 class="section-title">🎓 Education</h2>
+                    <div id="educationList"></div>
+                    <button type="button" class="btn-add" onclick="addEducation()">+ Add Education</button>
+                </div>
+
+                <!-- Projects -->
+                <div class="section">
+                    <h2 class="section-title">🚀 Projects</h2>
+                    <div id="projectsList"></div>
+                    <button type="button" class="btn-add" onclick="addProject()">+ Add Project</button>
+                </div>
+
+                <!-- Skills -->
+                <div class="section">
+                    <h2 class="section-title">🛠️ Technical Skills</h2>
+                    <div id="skillsList"></div>
+                    <button type="button" class="btn-add" onclick="addSkill()">+ Add Skill Category</button>
+                </div>
+
+                <!-- Certifications -->
+                <div class="section">
+                    <h2 class="section-title">🏆 Certifications</h2>
+                    <div id="certificationsList"></div>
+                    <button type="button" class="btn-add" onclick="addCertification()">+ Add Certification</button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="button" class="btn-pdf" onclick="generatePDF()">📥 Download PDF</button>
+                    <button type="button" class="btn-latex" onclick="generateLatex()">📄 Download LaTeX</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_URL = 'http://localhost:8080';
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function addExperience() {
+            const list = document.getElementById('experienceList');
+            const id = Date.now();
+            const html = `
+                <div class="item-card" id="exp-${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('exp-${id}').remove()">✕</button>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" class="exp-company" placeholder="Company Name">
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Job Title</label>
+                            <input type="text" class="exp-title" placeholder="Software Engineer">
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" class="exp-location" placeholder="City, Country">
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="text" class="exp-start" placeholder="Jan 2020">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="text" class="exp-end" placeholder="Present">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Responsibilities (one per line)</label>
+                        <textarea class="exp-bullets" placeholder="Led project development&#10;Improved performance by 40%"></textarea>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addEducation() {
+            const list = document.getElementById('educationList');
+            const id = Date.now();
+            const html = `
+                <div class="item-card" id="edu-${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('edu-${id}').remove()">✕</button>
+                    <div class="form-group">
+                        <label>School/University</label>
+                        <input type="text" class="edu-school" placeholder="University Name">
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Degree</label>
+                            <input type="text" class="edu-degree" placeholder="Bachelor of Science">
+                        </div>
+                        <div class="form-group">
+                            <label>Field of Study</label>
+                            <input type="text" class="edu-field" placeholder="Computer Science">
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" class="edu-location" placeholder="City, Country">
+                        </div>
+                        <div class="form-group">
+                            <label>Graduation Year</label>
+                            <input type="text" class="edu-end" placeholder="2020">
+                        </div>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addProject() {
+            const list = document.getElementById('projectsList');
+            const id = Date.now();
+            const html = `
+                <div class="item-card" id="proj-${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('proj-${id}').remove()">✕</button>
+                    <div class="form-group">
+                        <label>Project Name</label>
+                        <input type="text" class="proj-name" placeholder="Project Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Project Link</label>
+                        <input type="url" class="proj-link" placeholder="https://github.com/user/project">
+                    </div>
+                    <div class="form-group">
+                        <label>Technologies (comma-separated)</label>
+                        <input type="text" class="proj-tech" placeholder="React, Node.js, MongoDB">
+                    </div>
+                    <div class="form-group">
+                        <label>Description (one per line)</label>
+                        <textarea class="proj-bullets" placeholder="Built a web application&#10;Implemented REST API"></textarea>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addSkill() {
+            const list = document.getElementById('skillsList');
+            const id = Date.now();
+            const html = `
+                <div class="item-card" id="skill-${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('skill-${id}').remove()">✕</button>
+                    <div class="form-group">
+                        <label>Skill Category</label>
+                        <input type="text" class="skill-title" placeholder="Languages">
+                    </div>
+                    <div class="form-group">
+                        <label>Skills (comma-separated)</label>
+                        <input type="text" class="skill-items" placeholder="JavaScript, Python, Go">
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addCertification() {
+            const list = document.getElementById('certificationsList');
+            const id = Date.now();
+            const html = `
+                <div class="item-card" id="cert-${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('cert-${id}').remove()">✕</button>
+                    <div class="form-group">
+                        <label>Certification Name</label>
+                        <input type="text" class="cert-name" placeholder="AWS Certified Solutions Architect">
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function buildResume() {
+            const experience = Array.from(document.querySelectorAll('#experienceList .item-card')).map(card => ({
+                company: card.querySelector('.exp-company').value,
+                title: card.querySelector('.exp-title').value,
+                location: card.querySelector('.exp-location').value,
+                start: card.querySelector('.exp-start').value,
+                end: card.querySelector('.exp-end').value,
+                bullets: card.querySelector('.exp-bullets').value.split('\n').filter(b => b.trim())
+            }));
+
+            const education = Array.from(document.querySelectorAll('#educationList .item-card')).map(card => ({
+                school: card.querySelector('.edu-school').value,
+                degree: card.querySelector('.edu-degree').value,
+                location: card.querySelector('.edu-location').value,
+                end: card.querySelector('.edu-end').value
+            }));
+
+            const projects = Array.from(document.querySelectorAll('#projectsList .item-card')).map(card => ({
+                name: card.querySelector('.proj-name').value,
+                link: card.querySelector('.proj-link').value,
+                technologies: card.querySelector('.proj-tech').value.split(',').map(t => t.trim()).filter(t => t),
+                bullets: card.querySelector('.proj-bullets').value.split('\n').filter(b => b.trim())
+            }));
+
+            const skills = Array.from(document.querySelectorAll('#skillsList .item-card')).map(card => ({
+                title: card.querySelector('.skill-title').value,
+                items: card.querySelector('.skill-items').value.split(',').map(i => i.trim()).filter(i => i)
+            }));
+
+            const certifications = Array.from(document.querySelectorAll('#certificationsList .item-card')).map(card => ({
+                name: card.querySelector('.cert-name').value
+            }));
+
+            return {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                website: document.getElementById('website').value,
+                github: document.getElementById('github').value,
+                linkedin: document.getElementById('linkedin').value,
+                template: document.getElementById('template').value,
+                summary: document.getElementById('summary').value,
+                experience,
+                education,
+                projects,
+                skills,
+                certifications,
+                openSourceContributions: []
+            };
+        }
+
+        function downloadFile(blob, filename) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        async function generatePDF() {
+            const resume = buildResume();
+            console.log('📥 Generating PDF...', resume);
+            try {
+                console.log(`🔗 Fetching: ${API_URL}/api/resume/pdf`);
+                const response = await fetch(`${API_URL}/api/resume/pdf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resume })
+                });
+                console.log('✅ Response received:', response.status);
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                }
+                const blob = await response.blob();
+                console.log('✅ PDF blob received:', blob.size, 'bytes');
+                downloadFile(blob, 'resume.pdf');
+                showToast('PDF downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function generateLatex() {
+            const resume = buildResume();
+            console.log('📄 Generating LaTeX...', resume);
+            try {
+                console.log(`🔗 Fetching: ${API_URL}/api/resume/latex`);
+                const response = await fetch(`${API_URL}/api/resume/latex`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resume })
+                });
+                console.log('✅ Response received:', response.status);
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                }
+                const blob = await response.blob();
+                console.log('✅ LaTeX blob received:', blob.size, 'bytes');
+                downloadFile(blob, 'resume.tex');
+                showToast('LaTeX downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+% enhanced FAANG resume template
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+\setlist[itemize]{leftmargin=0.2in, itemsep=0.8pt, topsep=1pt, parsep=0pt}
+
+\definecolor{sectioncolor}{RGB}{24, 142, 203}
+\hypersetup{colorlinks=true, urlcolor=sectioncolor, linkcolor=sectioncolor}
+
+\newcommand{\contacticon}[2]{\href{#1}{\textcolor{sectioncolor}{\small #2}}}
+
+\titleformat{\section}{
+  \vspace{-2pt}\scshape\raggedright\fontsize{12pt}{14pt}\selectfont\bfseries\color{sectioncolor}
+}{}{0em}{}[\color{sectioncolor}\titlerule \vspace{-3pt}]
+
+%--------------------------------------------------
+% Commands
+%--------------------------------------------------
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in,label={},nosep]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.2in,nosep,label=\textbullet]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{1pt}
+  \item[]
+    {\fontsize{10pt}{12pt}\selectfont
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{\color{sectioncolor}#1} & #2 \\
+      \textit{#3} & \textit{#4}
+    \end{tabular*}
+    }
+  \vspace{1pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+  \vspace{1pt}
+  \item[]
+    {\fontsize{10pt}{12pt}\selectfont\textbf{#1}}%
+    \ifx\relax#2\relax\else
+    \\[-4pt]{\fontsize{9pt}{11pt}\selectfont\textit{#2}}%
+    \fi
+}
+
+\newcommand{\resumeOpenSourceHeading}[4]{
+  \vspace{1pt}
+  \item[]
+    {\begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      {\fontsize{10pt}{12pt}\selectfont\textbf{#1}%
+        \ifx\relax#3\relax
+        \else\ {\fontsize{9pt}{11pt}\selectfont\ (#3 stars)}\fi
+        \ifx\relax#2\relax
+        \else\ {\fontsize{9pt}{11pt}\selectfont\textit{- #2}}\fi
+      } & {\fontsize{9pt}{11pt}\selectfont\textbf{#4}} \\
+    \end{tabular*}
+    }
+}
+
+
+%--------------------------------------------------
+% Resume
+%--------------------------------------------------
+
+\begin{document}
+
+\begin{center}
+  {\fontsize{18pt}{20pt}\selectfont\textbf{\scshape {{md .Name}}}}\\
+  \vspace{4pt}
+  {\fontsize{10pt}{12pt}\selectfont
+  \href{mailto:{{.Email}}}{\textcolor{sectioncolor}{\faEnvelope} {{md .Email}}}
+  {{if .Phone}}\hspace{0.2cm} \href{{printf "{%s}" (phoneLink .Phone)}}{\textcolor{sectioncolor}{\faPhone} {{.Phone}}}{{end}}
+  {{if .Website}}\hspace{0.2cm} \href{https://{{- .Website -}}}{\textcolor{sectioncolor}{\faGlobe} {{.Website}}}{{end}}
+  {{if .Github}}\hspace{0.2cm} \href{{printf "{%s}" (profileLink "https://github.com/" .Github)}}{\textcolor{sectioncolor}{\faGithub} {{.Github}}}{{end}}
+  {{if .Linkedin}}\hspace{0.2cm} \href{{printf "{%s}" (profileLink "https://linkedin.com/in/" .Linkedin)}}{\textcolor{sectioncolor}{\faLinkedin} {{.Linkedin}}}{{end}}
+  }
+\end{center}
+
+\vspace{-0.4em}
+
+{{if .Summary}}
+\section{Summary}
+{\fontsize{10pt}{12pt}\selectfont {{md .Summary}}}
+{{end}}
+
+{{if .Education}}
+\section{Education}
+\resumeSubHeadingListStart
+{{- range .Education}}
+\resumeSubheading{ {{md .School}} }{ {{.Start}} -- {{.End}} }{ {{md .Degree}} }{ {{md .Location}} }
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+
+{{if .Experience}}
+\section{Experience}
+\resumeSubHeadingListStart
+{{- range .Experience}}
+\resumeSubheading{ {{md .Title}} }{ {{.Start}} -- {{.End}} }{ {{md .Company}} }{ {{md .Location}} }
+\resumeItemListStart
+{{- range .Bullets}}
+\item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
+{{- end}}
+\end{itemize}
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+
+{{if .Projects}}
+\section{Projects}
+\resumeSubHeadingListStart
+{{- range .Projects}}
+{{- if .Link}}
+\resumeProjectHeading{ \href{{printf "{%s}" .Link}}{ {{md .Name}} } }{ {{md (join .Technologies ", ")}} }
+{{- else}}
+\resumeProjectHeading{ {{md .Name}} }{ {{md (join .Technologies ", ")}} }
+{{- end}}
+\resumeItemListStart
+{{- range .Bullets}}
+\item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
+{{- end}}
+\end{itemize}
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+
+{{if .OpenSourceContributions}}
+\section{Open Source Contributions}
+\resumeSubHeadingListStart
+{{- range .OpenSourceContributions}}
+{{- if .RepoLink}}\resumeOpenSourceHeading{ \href{{printf "{%s}" .RepoLink}}{ {{md .Name}} } }{ {{md .Description}} }{ {{md .Stars}} }{ {{md .Role}} }%
+{{- else}}\resumeOpenSourceHeading{ {{md .Name}} }{ {{md .Description}} }{ {{md .Stars}} }{ {{md .Role}} }%
+{{- end}}
+{{- if .Contribution}}
+\resumeItemListStart
+\item {\fontsize{10pt}{12pt}\selectfont {{md .Contribution}} }
+\end{itemize}
+{{- end}}
+{{- if .Link}}
+{\fontsize{10pt}{12pt}\selectfont\textit{ Contribution PR : \href{{printf "{%s}" .Link}}{ {{md .Link}} } }}\\
+{{- end}}
+{{- if .Keywords}}
+{\fontsize{10pt}{12pt}\selectfont\textit{ Keywords: {{md (join .Keywords ", ")}} }}\\
+{{- end}}
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+
+{{if .Skills}}
+\section{Technical Skills}
+\resumeItemListStart
+{{- range .Skills}}
+\item {\fontsize{10pt}{12pt}\selectfont \textbf{ {{md .Title}} }: {{range $index, $item := .Items}}{{if $index}}, {{end}}{{md $item}}{{end}} }
+{{- end}}
+\end{itemize}
+{{end}}
+
+{{if .Certifications}}
+\section{Certifications}
+\resumeItemListStart
+{{- range .Certifications}}
+\item {\fontsize{10pt}{12pt}\selectfont {{md .Name}} }
+{{- end}}
+\end{itemize}
+{{end}}
+
+\end{document}
