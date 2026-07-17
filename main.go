@@ -116,6 +116,10 @@ func main() {
 	flag.Parse()
 
 	if *serverMode != "" {
+		if err := initResumeStore(defaultResumeDBPath); err != nil {
+			fmt.Fprintf(os.Stderr, "failed to initialize resume store: %v\n", err)
+			os.Exit(1)
+		}
 		if err := startServer(*serverMode); err != nil {
 			fmt.Fprintf(os.Stderr, "server failed: %v\n", err)
 			os.Exit(1)
@@ -275,10 +279,22 @@ func markdownToLatex(value string) string {
 func resolveResumeTemplatePath(selectedTemplate, fallbackTemplatePath string) (string, error) {
 	selectedTemplate = strings.TrimSpace(selectedTemplate)
 	if selectedTemplate == "" {
+		if templateFileExists(fallbackTemplatePath) {
+			return fallbackTemplatePath, nil
+		}
+		if fallbackTemplatePath == "templates/resume.tex.tmpl" {
+			return "templates/enhanced-faang-resume.tex.tmpl", nil
+		}
 		return fallbackTemplatePath, nil
 	}
 
 	if templatePath, ok := resumeTemplatePaths[selectedTemplate]; ok {
+		if templateFileExists(templatePath) {
+			return templatePath, nil
+		}
+		if templatePath == "templates/resume.tex.tmpl" {
+			return "templates/enhanced-faang-resume.tex.tmpl", nil
+		}
 		return templatePath, nil
 	}
 
@@ -287,6 +303,11 @@ func resolveResumeTemplatePath(selectedTemplate, fallbackTemplatePath string) (s
 	}
 
 	return "", fmt.Errorf("unsupported resume template %q", selectedTemplate)
+}
+
+func templateFileExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
 
 func normalizeProfileLink(prefix, value string) string {
@@ -363,6 +384,12 @@ func executeCompiler(compiler, latexPath, outputDir string) error {
 
 // startServer starts the HTTP API server
 func startServer(port string) error {
+	if resumeStore == nil {
+		return fmt.Errorf("resume store not initialized")
+	}
+
+	http.HandleFunc("/api/resumes", corsMiddleware(resumesHandler))
+	http.HandleFunc("/api/resumes/", corsMiddleware(resumeByIDHandler))
 	http.HandleFunc("/health", corsMiddleware(healthHandler))
 	http.HandleFunc("/api/resume/latex", corsMiddleware(generateResumeLatexHandler))
 	http.HandleFunc("/api/resume/pdf", corsMiddleware(generateResumePDFHandler))
@@ -370,6 +397,10 @@ func startServer(port string) error {
 
 	fmt.Printf("Starting Resume API server on http://localhost%s\n", port)
 	fmt.Println("Available endpoints:")
+	fmt.Println("  GET  /api/resumes      - List resumes")
+	fmt.Println("  POST /api/resumes      - Create resume")
+	fmt.Println("  GET  /api/resumes/{id} - Get resume")
+	fmt.Println("  PUT  /api/resumes/{id} - Update resume")
 	fmt.Println("  GET  /                 - Web UI")
 	fmt.Println("  POST /api/resume/latex - Generate LaTeX")
 	fmt.Println("  POST /api/resume/pdf   - Generate PDF")

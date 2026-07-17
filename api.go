@@ -7,7 +7,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	texttemplate "text/template"
+	"time"
 )
 
 type APIResumeRequest struct {
@@ -18,6 +21,26 @@ type APIResponse struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
+}
+
+type ResumeSaveRequest struct {
+	Name   string `json:"name"`
+	Resume Resume `json:"resume"`
+}
+
+type ResumeListResponse struct {
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+}
+
+type ResumeRecordResponse struct {
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Resume    Resume `json:"resume"`
 }
 
 // corsMiddleware adds CORS headers to responses
@@ -33,6 +56,136 @@ func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		next(w, r)
+	}
+}
+
+func resumesHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/api/resumes" {
+		http.NotFound(w, r)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		if resumeStore == nil {
+			respondJSON(w, http.StatusInternalServerError, APIResponse{Success: false, Message: "resume store is not initialized"})
+			return
+		}
+
+		resumes, err := resumeStore.List()
+		if err != nil {
+			respondJSON(w, http.StatusInternalServerError, APIResponse{Success: false, Message: err.Error()})
+			return
+		}
+
+		response := make([]ResumeListResponse, 0, len(resumes))
+		for _, record := range resumes {
+			response = append(response, ResumeListResponse{
+				ID:        record.ID,
+				Name:      record.Name,
+				CreatedAt: record.CreatedAt.Format(timeRFC3339Display),
+				UpdatedAt: record.UpdatedAt.Format(timeRFC3339Display),
+			})
+		}
+
+		respondJSON(w, http.StatusOK, APIResponse{Success: true, Data: response})
+	case http.MethodPost:
+		if resumeStore == nil {
+			respondJSON(w, http.StatusInternalServerError, APIResponse{Success: false, Message: "resume store is not initialized"})
+			return
+		}
+
+		var req ResumeSaveRequest
+		if r.Body != nil {
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil && err.Error() != "EOF" {
+				respondJSON(w, http.StatusBadRequest, APIResponse{Success: false, Message: fmt.Sprintf("invalid request body: %v", err)})
+				return
+			}
+		}
+
+		record, err := resumeStore.Create(req.Name, req.Resume)
+		if err != nil {
+			respondJSON(w, http.StatusInternalServerError, APIResponse{Success: false, Message: err.Error()})
+			return
+		}
+
+		respondJSON(w, http.StatusCreated, APIResponse{Success: true, Data: toResumeRecordResponse(record)})
+	default:
+		respondJSON(w, http.StatusMethodNotAllowed, APIResponse{Success: false, Message: "Method not allowed. Use GET or POST."})
+	}
+}
+
+func resumeByIDHandler(w http.ResponseWriter, r *http.Request) {
+	id, ok := parseResumeID(r.URL.Path)
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		record, err := resumeStore.Get(id)
+		if err != nil {
+			respondResumeError(w, err)
+			return
+		}
+		respondJSON(w, http.StatusOK, APIResponse{Success: true, Data: toResumeRecordResponse(record)})
+	case http.MethodPut:
+		var req ResumeSaveRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			respondJSON(w, http.StatusBadRequest, APIResponse{Success: false, Message: fmt.Sprintf("invalid request body: %v", err)})
+			return
+		}
+
+		record, err := resumeStore.Update(id, req.Name, req.Resume)
+		if err != nil {
+			respondResumeError(w, err)
+			return
+		}
+
+		respondJSON(w, http.StatusOK, APIResponse{Success: true, Data: toResumeRecordResponse(record)})
+	case http.MethodDelete:
+		if err := resumeStore.Delete(id); err != nil {
+			respondResumeError(w, err)
+			return
+		}
+		respondJSON(w, http.StatusOK, APIResponse{Success: true, Message: "resume deleted"})
+	default:
+		respondJSON(w, http.StatusMethodNotAllowed, APIResponse{Success: false, Message: "Method not allowed. Use GET, PUT, or DELETE."})
+	}
+}
+
+const timeRFC3339Display = time.RFC3339
+
+func parseResumeID(path string) (int64, bool) {
+	trimmed := strings.TrimPrefix(path, "/api/resumes/")
+	if trimmed == "" || strings.Contains(trimmed, "/") {
+		return 0, false
+	}
+
+	id, err := strconv.ParseInt(trimmed, 10, 64)
+	if err != nil {
+		return 0, false
+	}
+
+	return id, true
+}
+
+func respondResumeError(w http.ResponseWriter, err error) {
+	if strings.Contains(err.Error(), "not found") {
+		respondJSON(w, http.StatusNotFound, APIResponse{Success: false, Message: err.Error()})
+		return
+	}
+	respondJSON(w, http.StatusInternalServerError, APIResponse{Success: false, Message: err.Error()})
+}
+
+func toResumeRecordResponse(record ResumeRecord) ResumeRecordResponse {
+	return ResumeRecordResponse{
+		ID:        record.ID,
+		Name:      record.Name,
+		CreatedAt: record.CreatedAt.Format(timeRFC3339Display),
+		UpdatedAt: record.UpdatedAt.Format(timeRFC3339Display),
+		Resume:    record.Resume,
 	}
 }
 

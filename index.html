@@ -41,6 +41,121 @@
             flex-direction: column;
         }
 
+        .hidden {
+            display: none !important;
+        }
+
+        .library-shell {
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .library-panel {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+            overflow: hidden;
+        }
+
+        .library-header {
+            padding: 24px 26px;
+            background: linear-gradient(110deg, #0f172a 0%, #1e3a8a 70%, #2563eb 100%);
+            color: #fff;
+        }
+
+        .library-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .library-header p {
+            opacity: 0.9;
+        }
+
+        .library-content {
+            padding: 20px 26px 26px;
+        }
+
+        .library-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .resume-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .resume-card {
+            border: 1px solid #d8e1ec;
+            border-radius: 14px;
+            background: #fff;
+            padding: 18px;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .resume-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.1);
+            border-color: #9fb6d6;
+        }
+
+        .resume-card h3 {
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .resume-card p {
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.4;
+        }
+
+        .resume-card .resume-date {
+            margin-top: 12px;
+            font-size: 0.86rem;
+            color: #64748b;
+        }
+
+        .resume-card-actions {
+            margin-top: 14px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.86rem;
+            cursor: pointer;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        .empty-library {
+            border: 1px dashed #b5c3d7;
+            border-radius: 16px;
+            padding: 36px 20px;
+            text-align: center;
+            color: var(--muted);
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+        }
+
         .header {
             background: linear-gradient(110deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
             color: #fff;
@@ -145,13 +260,15 @@
             background: var(--panel);
             border: 1px solid var(--line);
             border-radius: 14px;
-            overflow: auto;
+            overflow-y: auto;
+            overflow-x: hidden;
             min-height: 0;
             box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
         }
 
         .form-pane-inner {
             padding: 20px;
+            min-width: 0;
         }
 
         .build-bar {
@@ -163,6 +280,43 @@
             padding: 12px;
             margin: -20px -20px 20px;
             backdrop-filter: blur(5px);
+        }
+
+        .resume-meta-bar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(180px, 260px);
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 12px;
+        }
+
+        .meta-text-stack {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            gap: 4px;
+            padding-bottom: 2px;
+        }
+
+        .meta-text {
+            font-size: 0.92rem;
+            color: #475569;
+            line-height: 1.3;
+        }
+
+        .btn-back {
+            background: #0f172a;
+            color: white;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-save:hover {
+            background: #1d4ed8;
         }
 
         .build-actions {
@@ -403,6 +557,10 @@
                 grid-template-rows: 48vh auto;
             }
 
+            .resume-meta-bar {
+                grid-template-columns: 1fr;
+            }
+
             .preview-pane {
                 min-height: 0;
             }
@@ -427,11 +585,33 @@
                 gap: 10px;
                 grid-template-rows: 42vh auto;
             }
+
+            .library-shell {
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="libraryView" class="library-shell">
+        <div class="library-panel">
+            <div class="library-header">
+                <h1>Free Resume Generator</h1>
+                <p>Select an existing resume or create a new one to get started.</p>
+            </div>
+            <div class="library-content">
+                <div class="library-actions">
+                    <div>
+                        <strong style="color: var(--accent);">Your Resumes</strong>
+                    </div>
+                    <button type="button" class="btn-build" id="createResumeButton">Create New Resume</button>
+                </div>
+                <div id="resumeList" class="resume-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editorView" class="container hidden">
         <div class="header">
             <h1>Free Resume Generator</h1>
             <p>Build and preview your resume side by side.</p>
@@ -460,7 +640,19 @@
                 <div class="form-pane-inner">
                     <div class="build-bar">
                         <div class="build-actions">
+                            <button type="button" class="btn-back" id="backToLibraryButton">Back</button>
+                            <button type="button" class="btn-save" id="saveResumeButton">Save Resume</button>
                             <button type="button" class="btn-build" id="buildButton" onclick="buildAndPreviewPDF()">Build & Preview</button>
+                        </div>
+                    </div>
+                    <div class="resume-meta-bar">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="resumeName">Resume Name</label>
+                            <input type="text" id="resumeName" placeholder="Untitled Resume">
+                        </div>
+                        <div class="meta-text-stack">
+                            <div class="meta-text" id="resumeCreatedAt">Created: -</div>
+                            <div class="meta-text" id="resumeUpdatedAt">Updated: -</div>
                         </div>
                     </div>
 
@@ -574,18 +766,359 @@
         let latestPdfObjectUrl = null;
         let isBuilding = false;
         let currentBuildController = null;
+        let currentResumeId = null;
+        let currentResumeCreatedAt = '';
+        let currentResumeUpdatedAt = '';
+        let dynamicCardCounter = 0;
+
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        function formatDateTime(value) {
+            if (!value) {
+                return '-';
+            }
+
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) {
+                return value;
+            }
+
+            return parsed.toLocaleString();
+        }
+
+        function nextCardId(prefix) {
+            dynamicCardCounter += 1;
+            return `${prefix}-${Date.now()}-${dynamicCardCounter}`;
+        }
+
+        function showLibraryView() {
+            $('libraryView').classList.remove('hidden');
+            $('editorView').classList.add('hidden');
+        }
+
+        function showEditorView() {
+            $('libraryView').classList.add('hidden');
+            $('editorView').classList.remove('hidden');
+        }
+
+        function updateResumeMetadataDisplay() {
+            $('resumeCreatedAt').textContent = `Created: ${formatDateTime(currentResumeCreatedAt)}`;
+            $('resumeUpdatedAt').textContent = `Updated: ${formatDateTime(currentResumeUpdatedAt)}`;
+        }
+
+        function clearSection(sectionId) {
+            const section = $(sectionId);
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+        }
+
+        function resetEditorForm() {
+            $('resumeName').value = '';
+            $('template').value = 'enhanced-faang-resume';
+            $('name').value = '';
+            $('email').value = '';
+            $('phone').value = '';
+            $('website').value = '';
+            $('github').value = '';
+            $('linkedin').value = '';
+            $('summary').value = '';
+
+            clearSection('experienceList');
+            clearSection('educationList');
+            clearSection('projectsList');
+            clearSection('skillsList');
+            clearSection('certificationsList');
+        }
+
+        function setCurrentResumeRecord(record) {
+            currentResumeId = record ? record.id : null;
+            currentResumeCreatedAt = record ? record.createdAt : '';
+            currentResumeUpdatedAt = record ? record.updatedAt : '';
+            updateResumeMetadataDisplay();
+        }
+
+        function getResumeRecordName() {
+            const value = $('resumeName').value.trim();
+            return value || 'Untitled Resume';
+        }
+
+        function buildResume() {
+            const experience = Array.from(document.querySelectorAll('#experienceList .item-card'))
+                .map(card => ({
+                    company: card.querySelector('.exp-company').value.trim(),
+                    title: card.querySelector('.exp-title').value.trim(),
+                    location: card.querySelector('.exp-location').value.trim(),
+                    start: card.querySelector('.exp-start').value.trim(),
+                    end: card.querySelector('.exp-end').value.trim(),
+                    bullets: card.querySelector('.exp-bullets').value.split('\n').map(b => b.trim()).filter(Boolean)
+                }))
+                .filter(item => item.company || item.title || item.location || item.start || item.end || item.bullets.length > 0);
+
+            const education = Array.from(document.querySelectorAll('#educationList .item-card'))
+                .map(card => ({
+                    school: card.querySelector('.edu-school').value.trim(),
+                    degree: card.querySelector('.edu-degree').value.trim(),
+                    location: card.querySelector('.edu-location').value.trim(),
+                    start: card.querySelector('.edu-start') ? card.querySelector('.edu-start').value.trim() : '',
+                    end: card.querySelector('.edu-end').value.trim()
+                }))
+                .filter(item => item.school || item.degree || item.location || item.start || item.end);
+
+            const projects = Array.from(document.querySelectorAll('#projectsList .item-card'))
+                .map(card => ({
+                    name: card.querySelector('.proj-name').value.trim(),
+                    link: card.querySelector('.proj-link').value.trim(),
+                    technologies: card.querySelector('.proj-tech').value.split(',').map(t => t.trim()).filter(Boolean),
+                    bullets: card.querySelector('.proj-bullets').value.split('\n').map(b => b.trim()).filter(Boolean)
+                }))
+                .filter(item => item.name || item.link || item.technologies.length > 0 || item.bullets.length > 0);
+
+            const skills = Array.from(document.querySelectorAll('#skillsList .item-card'))
+                .map(card => ({
+                    title: card.querySelector('.skill-title').value.trim(),
+                    items: card.querySelector('.skill-items').value.split(',').map(i => i.trim()).filter(Boolean)
+                }))
+                .filter(item => item.title || item.items.length > 0);
+
+            const certifications = Array.from(document.querySelectorAll('#certificationsList .item-card'))
+                .map(card => ({
+                    name: card.querySelector('.cert-name').value.trim()
+                }))
+                .filter(item => item.name);
+
+            return {
+                name: $('name').value,
+                email: $('email').value,
+                phone: $('phone').value,
+                website: $('website').value,
+                github: $('github').value,
+                linkedin: $('linkedin').value,
+                template: $('template').value,
+                summary: $('summary').value,
+                experience,
+                education,
+                projects,
+                skills,
+                certifications,
+                openSourceContributions: []
+            };
+        }
+
+        function createItemCardDataValue(input, value) {
+            if (!input) {
+                return;
+            }
+            input.value = value || '';
+        }
+
+        function populateResumeForm(record) {
+            const resume = record.resume || {};
+            resetEditorForm();
+            $('resumeName').value = record.name || 'Untitled Resume';
+            $('template').value = resume.template || 'enhanced-faang-resume';
+            $('name').value = resume.name || '';
+            $('email').value = resume.email || '';
+            $('phone').value = resume.phone || '';
+            $('website').value = resume.website || '';
+            $('github').value = resume.github || '';
+            $('linkedin').value = resume.linkedin || '';
+            $('summary').value = resume.summary || '';
+
+            (resume.experience || []).forEach(addExperience);
+            (resume.education || []).forEach(addEducation);
+            (resume.projects || []).forEach(addProject);
+            (resume.skills || []).forEach(addSkill);
+            (resume.certifications || []).forEach(addCertification);
+
+            if ((resume.experience || []).length === 0 && (resume.education || []).length === 0 && (resume.projects || []).length === 0 && (resume.skills || []).length === 0 && (resume.certifications || []).length === 0) {
+                addExperience();
+                addEducation();
+                addProject();
+                addSkill();
+                addCertification();
+            }
+
+            setCurrentResumeRecord(record);
+        }
+
+        function renderResumeCards(resumes) {
+            const list = $('resumeList');
+            list.innerHTML = '';
+
+            if (!resumes || resumes.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-library" style="grid-column: 1 / -1;">
+                        <h3 style="margin-bottom: 8px; color: var(--accent);">No resumes yet</h3>
+                        <p style="margin-bottom: 18px;">Create your first resume to start editing and generating PDFs.</p>
+                        <button type="button" class="btn-build" id="emptyCreateResumeButton">Create New Resume</button>
+                    </div>
+                `;
+
+                const emptyButton = $('emptyCreateResumeButton');
+                if (emptyButton) {
+                    emptyButton.addEventListener('click', createResume);
+                }
+                return;
+            }
+
+            resumes.forEach(resume => {
+                const card = document.createElement('div');
+                card.className = 'resume-card';
+                card.innerHTML = `
+                    <h3>${resume.name || 'Untitled Resume'}</h3>
+                    <p>Open this resume to edit, save, and rebuild the PDF.</p>
+                    <div class="resume-date">Created ${formatDateTime(resume.createdAt)}</div>
+                    <div class="resume-card-actions">
+                        <button type="button" class="btn-delete" data-resume-id="${resume.id}" data-resume-name="${(resume.name || 'Untitled Resume').replace(/"/g, '&quot;')}">Delete</button>
+                    </div>
+                `;
+                card.addEventListener('click', () => openResume(resume.id));
+                list.appendChild(card);
+
+                const deleteButton = card.querySelector('.btn-delete');
+                if (deleteButton) {
+                    deleteButton.addEventListener('click', function (event) {
+                        event.stopPropagation();
+                        const resumeId = Number(this.dataset.resumeId);
+                        const resumeName = this.dataset.resumeName || 'Untitled Resume';
+                        deleteResume(resumeId, resumeName);
+                    });
+                }
+            });
+        }
+
+        async function deleteResume(id, name) {
+            const shouldDelete = window.confirm(`Delete resume \"${name}\"? This action cannot be undone.`);
+            if (!shouldDelete) {
+                return;
+            }
+
+            const response = await fetch(`${API_URL}/api/resumes/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            }
+
+            if (currentResumeId === id) {
+                currentResumeId = null;
+                currentResumeCreatedAt = '';
+                currentResumeUpdatedAt = '';
+                resetEditorForm();
+                updateResumeMetadataDisplay();
+                showLibraryView();
+            }
+
+            await loadResumeList();
+            showToast('Resume deleted successfully.', 'success');
+        }
+
+        async function loadResumeList() {
+            const response = await fetch(`${API_URL}/api/resumes`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            }
+
+            const payload = await response.json();
+            renderResumeCards(payload.data || []);
+        }
+
+        async function openResume(id) {
+            const response = await fetch(`${API_URL}/api/resumes/${id}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            }
+
+            const payload = await response.json();
+            populateResumeForm(payload.data);
+            showEditorView();
+        }
+
+        async function createResume(silent = false) {
+            const response = await fetch(`${API_URL}/api/resumes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: 'Untitled Resume' })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            }
+
+            const payload = await response.json();
+            populateResumeForm(payload.data);
+            showEditorView();
+            if (!silent) {
+                showToast('Resume created successfully.', 'success');
+            }
+        }
+
+        async function saveCurrentResume(options = {}) {
+            const silent = options.silent === true;
+            const resume = buildResume();
+
+            if (!currentResumeId) {
+                const response = await fetch(`${API_URL}/api/resumes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: getResumeRecordName(),
+                        resume
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+
+                const payload = await response.json();
+                setCurrentResumeRecord(payload.data);
+                await loadResumeList();
+
+                if (!silent) {
+                    showToast('Resume saved successfully.', 'success');
+                }
+
+                return;
+            }
+
+            const response = await fetch(`${API_URL}/api/resumes/${currentResumeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: getResumeRecordName(),
+                    resume
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            }
+
+            const payload = await response.json();
+            setCurrentResumeRecord(payload.data);
+            await loadResumeList();
+            if (!silent) {
+                showToast('Resume saved successfully.', 'success');
+            }
+        }
 
         function setBuildState(building, statusText) {
             isBuilding = building;
-            document.getElementById('buildButton').disabled = building;
-            document.getElementById('downloadPdfButton').disabled = building;
-            document.getElementById('downloadLatexButton').disabled = building;
-            document.getElementById('previewStatus').textContent = statusText;
+            $('buildButton').disabled = building;
+            $('saveResumeButton').disabled = building;
+            $('downloadPdfButton').disabled = building;
+            $('downloadLatexButton').disabled = building;
+            $('previewStatus').textContent = statusText;
         }
 
         function setPreviewPDF(blob) {
-            const preview = document.getElementById('pdfPreview');
-            const openPreviewLink = document.getElementById('openPreviewLink');
+            const preview = $('pdfPreview');
+            const openPreviewLink = $('openPreviewLink');
             if (latestPdfObjectUrl) {
                 URL.revokeObjectURL(latestPdfObjectUrl);
             }
@@ -595,18 +1128,18 @@
         }
 
         function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
+            const toast = $('toast');
             toast.textContent = message;
             toast.className = `toast show ${type}`;
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function addExperience() {
-            const list = document.getElementById('experienceList');
-            const id = Date.now();
+        function addExperience(data = {}) {
+            const list = $('experienceList');
+            const id = nextCardId('exp');
             const html = `
-                <div class="item-card" id="exp-${id}">
-                    <button type="button" class="remove-btn" onclick="document.getElementById('exp-${id}').remove()">✕</button>
+                <div class="item-card" id="${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('${id}').remove()">✕</button>
                     <div class="form-group">
                         <label>Company</label>
                         <input type="text" class="exp-company" placeholder="Company Name">
@@ -638,14 +1171,21 @@
                 </div>
             `;
             list.insertAdjacentHTML('beforeend', html);
+            const card = document.getElementById(id);
+            createItemCardDataValue(card.querySelector('.exp-company'), data.company);
+            createItemCardDataValue(card.querySelector('.exp-title'), data.title);
+            createItemCardDataValue(card.querySelector('.exp-location'), data.location);
+            createItemCardDataValue(card.querySelector('.exp-start'), data.start);
+            createItemCardDataValue(card.querySelector('.exp-end'), data.end);
+            createItemCardDataValue(card.querySelector('.exp-bullets'), (data.bullets || []).join('\n'));
         }
 
-        function addEducation() {
-            const list = document.getElementById('educationList');
-            const id = Date.now();
+        function addEducation(data = {}) {
+            const list = $('educationList');
+            const id = nextCardId('edu');
             const html = `
-                <div class="item-card" id="edu-${id}">
-                    <button type="button" class="remove-btn" onclick="document.getElementById('edu-${id}').remove()">✕</button>
+                <div class="item-card" id="${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('${id}').remove()">✕</button>
                     <div class="form-group">
                         <label>School/University</label>
                         <input type="text" class="edu-school" placeholder="University Name">
@@ -666,6 +1206,10 @@
                             <input type="text" class="edu-location" placeholder="City, Country">
                         </div>
                         <div class="form-group">
+                            <label>Start Year</label>
+                            <input type="text" class="edu-start" placeholder="2018">
+                        </div>
+                        <div class="form-group">
                             <label>Graduation Year</label>
                             <input type="text" class="edu-end" placeholder="2020">
                         </div>
@@ -673,14 +1217,20 @@
                 </div>
             `;
             list.insertAdjacentHTML('beforeend', html);
+            const card = document.getElementById(id);
+            createItemCardDataValue(card.querySelector('.edu-school'), data.school);
+            createItemCardDataValue(card.querySelector('.edu-degree'), data.degree);
+            createItemCardDataValue(card.querySelector('.edu-location'), data.location);
+            createItemCardDataValue(card.querySelector('.edu-start'), data.start);
+            createItemCardDataValue(card.querySelector('.edu-end'), data.end);
         }
 
-        function addProject() {
-            const list = document.getElementById('projectsList');
-            const id = Date.now();
+        function addProject(data = {}) {
+            const list = $('projectsList');
+            const id = nextCardId('proj');
             const html = `
-                <div class="item-card" id="proj-${id}">
-                    <button type="button" class="remove-btn" onclick="document.getElementById('proj-${id}').remove()">✕</button>
+                <div class="item-card" id="${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('${id}').remove()">✕</button>
                     <div class="form-group">
                         <label>Project Name</label>
                         <input type="text" class="proj-name" placeholder="Project Name">
@@ -700,14 +1250,19 @@
                 </div>
             `;
             list.insertAdjacentHTML('beforeend', html);
+            const card = document.getElementById(id);
+            createItemCardDataValue(card.querySelector('.proj-name'), data.name);
+            createItemCardDataValue(card.querySelector('.proj-link'), data.link);
+            createItemCardDataValue(card.querySelector('.proj-tech'), (data.technologies || []).join(', '));
+            createItemCardDataValue(card.querySelector('.proj-bullets'), (data.bullets || []).join('\n'));
         }
 
-        function addSkill() {
-            const list = document.getElementById('skillsList');
-            const id = Date.now();
+        function addSkill(data = {}) {
+            const list = $('skillsList');
+            const id = nextCardId('skill');
             const html = `
-                <div class="item-card" id="skill-${id}">
-                    <button type="button" class="remove-btn" onclick="document.getElementById('skill-${id}').remove()">✕</button>
+                <div class="item-card" id="${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('${id}').remove()">✕</button>
                     <div class="form-group">
                         <label>Skill Category</label>
                         <input type="text" class="skill-title" placeholder="Languages">
@@ -719,14 +1274,17 @@
                 </div>
             `;
             list.insertAdjacentHTML('beforeend', html);
+            const card = document.getElementById(id);
+            createItemCardDataValue(card.querySelector('.skill-title'), data.title);
+            createItemCardDataValue(card.querySelector('.skill-items'), (data.items || []).join(', '));
         }
 
-        function addCertification() {
-            const list = document.getElementById('certificationsList');
-            const id = Date.now();
+        function addCertification(data = {}) {
+            const list = $('certificationsList');
+            const id = nextCardId('cert');
             const html = `
-                <div class="item-card" id="cert-${id}">
-                    <button type="button" class="remove-btn" onclick="document.getElementById('cert-${id}').remove()">✕</button>
+                <div class="item-card" id="${id}">
+                    <button type="button" class="remove-btn" onclick="document.getElementById('${id}').remove()">✕</button>
                     <div class="form-group">
                         <label>Certification Name</label>
                         <input type="text" class="cert-name" placeholder="AWS Certified Solutions Architect">
@@ -734,68 +1292,8 @@
                 </div>
             `;
             list.insertAdjacentHTML('beforeend', html);
-        }
-
-        function buildResume() {
-            const experience = Array.from(document.querySelectorAll('#experienceList .item-card'))
-                .map(card => ({
-                    company: card.querySelector('.exp-company').value.trim(),
-                    title: card.querySelector('.exp-title').value.trim(),
-                    location: card.querySelector('.exp-location').value.trim(),
-                    start: card.querySelector('.exp-start').value.trim(),
-                    end: card.querySelector('.exp-end').value.trim(),
-                    bullets: card.querySelector('.exp-bullets').value.split('\n').map(b => b.trim()).filter(Boolean)
-                }))
-                .filter(item => item.company || item.title || item.location || item.start || item.end || item.bullets.length > 0);
-
-            const education = Array.from(document.querySelectorAll('#educationList .item-card'))
-                .map(card => ({
-                    school: card.querySelector('.edu-school').value.trim(),
-                    degree: card.querySelector('.edu-degree').value.trim(),
-                    location: card.querySelector('.edu-location').value.trim(),
-                    end: card.querySelector('.edu-end').value.trim()
-                }))
-                .filter(item => item.school || item.degree || item.location || item.end);
-
-            const projects = Array.from(document.querySelectorAll('#projectsList .item-card'))
-                .map(card => ({
-                    name: card.querySelector('.proj-name').value.trim(),
-                    link: card.querySelector('.proj-link').value.trim(),
-                    technologies: card.querySelector('.proj-tech').value.split(',').map(t => t.trim()).filter(Boolean),
-                    bullets: card.querySelector('.proj-bullets').value.split('\n').map(b => b.trim()).filter(Boolean)
-                }))
-                .filter(item => item.name || item.link || item.technologies.length > 0 || item.bullets.length > 0);
-
-            const skills = Array.from(document.querySelectorAll('#skillsList .item-card'))
-                .map(card => ({
-                    title: card.querySelector('.skill-title').value.trim(),
-                    items: card.querySelector('.skill-items').value.split(',').map(i => i.trim()).filter(Boolean)
-                }))
-                .filter(item => item.title || item.items.length > 0);
-
-            const certifications = Array.from(document.querySelectorAll('#certificationsList .item-card'))
-                .map(card => ({
-                    name: card.querySelector('.cert-name').value.trim()
-                }))
-                .filter(item => item.name);
-
-            return {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                website: document.getElementById('website').value,
-                github: document.getElementById('github').value,
-                linkedin: document.getElementById('linkedin').value,
-                template: document.getElementById('template').value,
-                summary: document.getElementById('summary').value,
-                experience,
-                education,
-                projects,
-                skills,
-                certifications,
-                openSourceContributions: []
-            };
-
+            const card = document.getElementById(id);
+            createItemCardDataValue(card.querySelector('.cert-name'), data.name);
         }
 
         function downloadFile(blob, filename) {
@@ -813,6 +1311,8 @@
             if (isBuilding) {
                 return;
             }
+
+            await saveCurrentResume({ silent: true });
 
             const resume = buildResume();
 
@@ -905,54 +1405,54 @@
             }
         }
 
-        // Preserve backward compatibility for previous button handlers.
-        window.generatePDF = downloadPDF;
+        function bindEditorActions() {
+            $('createResumeButton').addEventListener('click', createResume);
+            $('backToLibraryButton').addEventListener('click', showLibraryView);
+            $('saveResumeButton').addEventListener('click', async function () {
+                try {
+                    await saveCurrentResume();
+                } catch (error) {
+                    showToast(`Error: ${error.message}`, 'error');
+                }
+            });
 
-        // Seed one card for each major repeating section.
-        addExperience();
-        addEducation();
-        addProject();
-        addSkill();
-        addCertification();
+            $('resumeForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                buildAndPreviewPDF();
+            });
 
-        // Prevent form submission reloading the page.
-        document.getElementById('resumeForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            buildAndPreviewPDF();
-        });
-
-        window.addEventListener('beforeunload', function () {
-            if (latestPdfObjectUrl) {
-                URL.revokeObjectURL(latestPdfObjectUrl);
-            }
-            if (currentBuildController) {
-                currentBuildController.abort();
-            }
-        });
-
-        document.getElementById('pdfPreview').srcdoc = `
-            <html>
-                <body style="margin:0;display:flex;align-items:center;justify-content:center;font-family:Segoe UI,Tahoma,sans-serif;color:#475569;background:#f1f5f9;">
-                    <div style="text-align:center;padding:24px;line-height:1.5;max-width:320px;">
-                        <h3 style="margin:0 0 8px;color:#0f172a;">Preview Not Built Yet</h3>
-                        <p style="margin:0;">Fill the form and click Build &amp; Preview to render your resume PDF here.</p>
-                    </div>
-                </body>
-            </html>
-        `;
+            window.addEventListener('beforeunload', function () {
+                if (latestPdfObjectUrl) {
+                    URL.revokeObjectURL(latestPdfObjectUrl);
+                }
+                if (currentBuildController) {
+                    currentBuildController.abort();
+                }
+            });
+        }
 
         // Expose builder for manual debugging in browser console.
         window.buildResume = buildResume;
         window.buildAndPreviewPDF = buildAndPreviewPDF;
         window.downloadPDF = downloadPDF;
         window.generateLatex = generateLatex;
+        window.createResume = createResume;
+        window.saveCurrentResume = saveCurrentResume;
+        window.openResume = openResume;
         window.addExperience = addExperience;
         window.addEducation = addEducation;
         window.addProject = addProject;
         window.addSkill = addSkill;
         window.addCertification = addCertification;
 
+        bindEditorActions();
+        showLibraryView();
+        updateResumeMetadataDisplay();
         setBuildState(false, 'Waiting for first build');
+
+        loadResumeList().catch(error => {
+            showToast(`Error loading resumes: ${error.message}`, 'error');
+        });
     </script>
 </body>
 </html>
