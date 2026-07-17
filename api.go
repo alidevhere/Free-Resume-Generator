@@ -218,8 +218,8 @@ func compilePDF(latexPath, outputDir string) error {
 	return fmt.Errorf("no LaTeX compiler found; install pdflatex or tectonic")
 }
 
-// joinStrings is a wrapper around strings.Join for templates
-func joinStrings(sep string, items []string) string {
+// joinStrings joins template slices and matches template call order: join .Items ", "
+func joinStrings(items []string, sep string) string {
 	result := ""
 	for i, item := range items {
 		if i > 0 {

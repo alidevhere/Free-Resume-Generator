@@ -237,3 +237,10 @@ func TestMarkdownFormattingRendersToLatex(t *testing.T) {
 		t.Fatalf("expected italic markdown to render to latex, got %q", rendered)
 	}
 }
+
+func TestJoinStringsMatchesTemplateArgumentOrder(t *testing.T) {
+	got := joinStrings([]string{"Go", "Python", "SQL"}, ", ")
+	if got != "Go, Python, SQL" {
+		t.Fatalf("unexpected joined result: %q", got)
+	}
+}

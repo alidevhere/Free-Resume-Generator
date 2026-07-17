@@ -126,11 +126,13 @@
 \resumeSubHeadingListStart
 {{- range .Experience}}
 \resumeSubheading{ {{md .Title}} }{ {{.Start}} -- {{.End}} }{ {{md .Company}} }{ {{md .Location}} }
+{{- if .Bullets}}
 \resumeItemListStart
 {{- range .Bullets}}
 \item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
 {{- end}}
 \end{itemize}
+{{- end}}
 {{- end}}
 \resumeSubHeadingListEnd
 {{end}}
@@ -144,11 +146,13 @@
 {{- else}}
 \resumeProjectHeading{ {{md .Name}} }{ {{md (join .Technologies ", ")}} }
 {{- end}}
+{{- if .Bullets}}
 \resumeItemListStart
 {{- range .Bullets}}
 \item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
 {{- end}}
 \end{itemize}
+{{- end}}
 {{- end}}
 \resumeSubHeadingListEnd
 {{end}}
