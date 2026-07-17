@@ -112,6 +112,7 @@ func main() {
 	inputPath := flag.String("input", "resume.json", "path to the resume JSON file")
 	templatePath := flag.String("template", "templates/enhanced-faang-resume.tex.tmpl", "path to the LaTeX template")
 	outputDir := flag.String("output", "output", "directory for generated files")
+	outputFormat := flag.String("format", "both", "output format: latex, pdf, or both")
 	serverMode := flag.String("server", "", "start HTTP server on specified port (e.g., ':8080')")
 	flag.Parse()
 
@@ -127,13 +128,24 @@ func main() {
 		return
 	}
 
+	format := strings.ToLower(strings.TrimSpace(*outputFormat))
+	if format != "latex" && format != "pdf" && format != "both" {
+		fmt.Fprintf(os.Stderr, "invalid -format value %q; expected one of: latex, pdf, both\n", *outputFormat)
+		os.Exit(2)
+	}
+
 	if err := renderResume(*inputPath, *templatePath, *outputDir); err != nil {
 		fmt.Fprintf(os.Stderr, "resume generation failed: %v\n", err)
 		os.Exit(1)
 	}
 
+	if format == "latex" {
+		return
+	}
+
 	if err := renderPDF(*outputDir); err != nil {
-		fmt.Fprintf(os.Stderr, "warning: %v\n", err)
+		fmt.Fprintf(os.Stderr, "pdf generation failed: %v\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -343,7 +355,7 @@ func renderPDF(outputDir string) error {
 		if _, err := exec.LookPath(compiler); err == nil {
 			var cmd *exec.Cmd
 			if compiler == "tectonic" {
-				cmd = exec.Command(compiler, "--outdir", outputDir, latexPath)
+				cmd = exec.Command(compiler, "--only-cached", "--outdir", outputDir, latexPath)
 			} else {
 				cmd = exec.Command(compiler, "-interaction=nonstopmode", "-halt-on-error", "-output-directory", outputDir, latexPath)
 			}
@@ -370,7 +382,7 @@ func canCompile(compiler string) bool {
 func executeCompiler(compiler, latexPath, outputDir string) error {
 	var cmd *exec.Cmd
 	if compiler == "tectonic" {
-		cmd = exec.Command(compiler, "--outdir", outputDir, latexPath)
+		cmd = exec.Command(compiler, "--only-cached", "--outdir", outputDir, latexPath)
 	} else {
 		cmd = exec.Command(compiler, "-interaction=nonstopmode", "-halt-on-error", "-output-directory", outputDir, latexPath)
 	}
@@ -388,12 +400,14 @@ func startServer(port string) error {
 		return fmt.Errorf("resume store not initialized")
 	}
 
-	http.HandleFunc("/api/resumes", corsMiddleware(resumesHandler))
-	http.HandleFunc("/api/resumes/", corsMiddleware(resumeByIDHandler))
-	http.HandleFunc("/health", corsMiddleware(healthHandler))
-	http.HandleFunc("/api/resume/latex", corsMiddleware(generateResumeLatexHandler))
-	http.HandleFunc("/api/resume/pdf", corsMiddleware(generateResumePDFHandler))
-	http.HandleFunc("/", corsMiddleware(serveHTML))
+	http.HandleFunc("/api/resumes", resumesHandler)
+	http.HandleFunc("/api/resumes/", resumeByIDHandler)
+	http.HandleFunc("/health", healthHandler)
+	http.HandleFunc("/api/resume/latex", generateResumeLatexHandler)
+	http.HandleFunc("/api/resume/pdf", generateResumePDFHandler)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	})
 
 	fmt.Printf("Starting Resume API server on http://localhost%s\n", port)
 	fmt.Println("Available endpoints:")
@@ -401,31 +415,8 @@ func startServer(port string) error {
 	fmt.Println("  POST /api/resumes      - Create resume")
 	fmt.Println("  GET  /api/resumes/{id} - Get resume")
 	fmt.Println("  PUT  /api/resumes/{id} - Update resume")
-	fmt.Println("  GET  /                 - Web UI")
 	fmt.Println("  POST /api/resume/latex - Generate LaTeX")
 	fmt.Println("  POST /api/resume/pdf   - Generate PDF")
 	fmt.Println("  GET  /health           - Health check")
 	return http.ListenAndServe(port, nil)
-}
-
-// serveHTML serves the index.html file
-func serveHTML(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/favicon.ico" {
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-
-	if r.URL.Path == "/" {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		data, err := os.ReadFile("index.html")
-		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
-			fmt.Fprintf(w, "404 - index.html not found")
-			return
-		}
-		w.Write(data)
-	} else {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, "404 - Not Found")
-	}
 }
