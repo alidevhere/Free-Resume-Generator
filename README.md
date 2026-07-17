@@ -74,6 +74,39 @@ npm run lint
 npm run typecheck
 ```
 
+## Desktop App (Tauri)
+
+This repository includes a Tauri desktop shell in `frontend/src-tauri`.
+
+- The frontend is exported as static assets for desktop builds.
+- The Go backend is compiled as a bundled sidecar binary and auto-started by Tauri.
+- End users install a single desktop app bundle and do not need Docker, Go, or Node installed.
+
+From `frontend/`:
+
+```bash
+npm install
+npm run tauri:dev
+```
+
+To create an installable desktop bundle:
+
+```bash
+npm run tauri:build
+```
+
+## Desktop Data Storage (SQLite)
+
+When users install the desktop app, resumes are stored in a per-user SQLite database named `resumes.db` under the app data directory for your Tauri app identifier (`com.free.resume.generator`).
+
+Default locations:
+
+- macOS: `~/Library/Application Support/com.free.resume.generator/resumes.db`
+- Windows: `%AppData%\\com.free.resume.generator\\resumes.db`
+- Linux: `~/.local/share/com.free.resume.generator/resumes.db`
+
+In backend-only mode (without the desktop shell), the default database path is `backend/data/resumes.db` unless overridden with `-db`.
+
 ## Docker (Single Command: Frontend + Backend)
 
 From the project root, run:

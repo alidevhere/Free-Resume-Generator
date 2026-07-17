@@ -50,7 +50,7 @@ export default function LibraryPage() {
   async function handleCreate() {
     try {
       const record = await createResume();
-      router.push(`/editor/${record.id}`);
+      router.push(`/editor?id=${record.id}`);
     } catch (error) {
       setToast({
         tone: "error",
@@ -111,7 +111,7 @@ export default function LibraryPage() {
                 <ResumeCard
                   key={item.id}
                   item={item}
-                  onOpen={(id) => router.push(`/editor/${id}`)}
+                  onOpen={(id) => router.push(`/editor?id=${id}`)}
                   onDelete={handleDelete}
                 />
               ))}

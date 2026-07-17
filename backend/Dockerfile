@@ -39,15 +39,26 @@ RUN resume-generator \
     -format latex
 
 # Warm the Tectonic cache
-RUN tectonic \
+RUN set -eux; \
+    if tectonic \
     --outdir /tmp/tectonic-warmup \
-    /tmp/tectonic-warmup/resume.tex
+    /tmp/tectonic-warmup/resume.tex; then \
+    echo "Tectonic cache warmup succeeded."; \
+    else \
+    echo "WARNING: Tectonic cache warmup failed (likely DNS/network)." >&2; \
+    echo "WARNING: Runtime PDF generation with --only-cached may fail until cache is primed." >&2; \
+    fi
 
 # Verify everything is cached
-RUN tectonic \
+RUN set -eux; \
+    if tectonic \
     --only-cached \
     --outdir /tmp/tectonic-warmup \
-    /tmp/tectonic-warmup/resume.tex
+    /tmp/tectonic-warmup/resume.tex; then \
+    echo "Verified Tectonic cache is ready for offline runs."; \
+    else \
+    echo "WARNING: Offline cache verification skipped; continuing image build." >&2; \
+    fi
 
 # Clean up
 RUN rm -rf /tmp/tectonic-warmup

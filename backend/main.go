@@ -113,11 +113,13 @@ func main() {
 	templatePath := flag.String("template", "templates/enhanced-faang-resume.tex.tmpl", "path to the LaTeX template")
 	outputDir := flag.String("output", "output", "directory for generated files")
 	outputFormat := flag.String("format", "both", "output format: latex, pdf, or both")
+	dbPath := flag.String("db", defaultResumeDBPath, "sqlite database file path (server mode)")
+	seedPath := flag.String("seed", defaultSeedResumePath, "seed resume json file path (server mode)")
 	serverMode := flag.String("server", "", "start HTTP server on specified port (e.g., ':8080')")
 	flag.Parse()
 
 	if *serverMode != "" {
-		if err := initResumeStore(defaultResumeDBPath); err != nil {
+		if err := initResumeStore(*dbPath, *seedPath); err != nil {
 			fmt.Fprintf(os.Stderr, "failed to initialize resume store: %v\n", err)
 			os.Exit(1)
 		}

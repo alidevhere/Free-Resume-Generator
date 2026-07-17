@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "tauri:backend": "node ./scripts/build-sidecar.mjs",
+    "tauri:frontend:dev": "NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8080 next dev",
+    "tauri:frontend:build": "TAURI_EXPORT=true NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8080 next build",
+    "tauri:dev": "npm run tauri:backend && tauri dev",
+    "tauri:build": "npm run tauri:backend && tauri build"
   },
   "dependencies": {
     "next": "15.3.2",
@@ -15,6 +20,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
     "@types/node": "22.15.24",
     "@types/react": "19.1.5",
     "@types/react-dom": "19.1.5",

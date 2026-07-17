@@ -37,9 +37,12 @@ type ResumeRecord struct {
 	Resume    Resume    `json:"resume"`
 }
 
-func initResumeStore(dbPath string) error {
+func initResumeStore(dbPath, seedPath string) error {
 	if strings.TrimSpace(dbPath) == "" {
 		dbPath = defaultResumeDBPath
+	}
+	if strings.TrimSpace(seedPath) == "" {
+		seedPath = defaultSeedResumePath
 	}
 
 	_, statErr := os.Stat(dbPath)
@@ -67,7 +70,7 @@ func initResumeStore(dbPath string) error {
 		return err
 	}
 
-	if err := store.seedDefaultResume(wasMissing, defaultSeedResumePath); err != nil {
+	if err := store.seedDefaultResume(wasMissing, seedPath); err != nil {
 		_ = db.Close()
 		return err
 	}
