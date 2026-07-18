@@ -48,6 +48,7 @@ export type Resume = {
   github: string;
   template: string;
   summary: string;
+  sectionOrder: string[];
   skills: SkillCategory[];
   experience: Experience[];
   projects: Project[];

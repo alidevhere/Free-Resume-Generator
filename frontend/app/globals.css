@@ -328,6 +328,106 @@ textarea {
   background: var(--success);
 }
 
+/* Section Order Editor */
+.section-order-editor {
+  user-select: none;
+}
+
+.section-order-hint {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.section-order-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section-order-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f1f5f9;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: grab;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.section-order-item:active {
+  cursor: grabbing;
+}
+
+.section-order-item.drag-over {
+  background: #dbeafe;
+  border-color: var(--brand);
+}
+
+.drag-handle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  cursor: grab;
+  line-height: 1;
+}
+
+.section-label {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.section-order-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section-order-arrows button {
+  width: auto;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 1px 4px;
+  font-size: 0.7rem;
+  line-height: 1;
+  border-radius: 3px;
+}
+
+.section-order-arrows button:hover:not(:disabled) {
+  background: var(--bg-2);
+  color: var(--brand);
+}
+
+.section-order-arrows button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.reset-order-btn {
+  margin-top: 10px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  cursor: pointer;
+  width: auto;
+}
+
+.reset-order-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
 .btn-slate {
   background: var(--slate);
 }

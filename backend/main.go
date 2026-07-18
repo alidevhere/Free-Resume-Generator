@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -20,6 +21,16 @@ var resumeTemplatePaths = map[string]string{
 	"resume":              "templates/enhanced-faang-resume.tex.tmpl",
 }
 
+var defaultSectionOrder = []string{
+	"summary",
+	"education",
+	"experience",
+	"projects",
+	"openSource",
+	"skills",
+	"certifications",
+}
+
 type Resume struct {
 	Version int    `json:"version"`
 	Name    string `json:"name"`
@@ -32,7 +43,8 @@ type Resume struct {
 	Github   string `json:"github"`
 	Template string `json:"template,omitempty"`
 
-	Summary string `json:"summary"`
+	Summary      string   `json:"summary"`
+	SectionOrder []string `json:"sectionOrder,omitempty"`
 
 	Skills                  []SkillCategory          `json:"skills"`
 	Experience              []Experience             `json:"experience"`
@@ -54,7 +66,8 @@ type resumeInput struct {
 	Github   string `json:"github"`
 	Template string `json:"template,omitempty"`
 
-	Summary string `json:"summary"`
+	Summary      string   `json:"summary"`
+	SectionOrder []string `json:"sectionOrder,omitempty"`
 
 	Skills                  []SkillCategory          `json:"skills"`
 	Experience              []Experience             `json:"experience"`
@@ -176,12 +189,20 @@ func renderResume(inputPath, templatePath, outputDir string) error {
 		return fmt.Errorf("read template file: %w", err)
 	}
 
-	tpl, err := texttemplate.New("resume").Funcs(texttemplate.FuncMap{
+	var tpl *texttemplate.Template
+	tpl, err = texttemplate.New("resume").Funcs(texttemplate.FuncMap{
 		"join":        strings.Join,
 		"latex":       escapeLatex,
 		"md":          markdownToLatex,
 		"profileLink": normalizeProfileLink,
 		"phoneLink":   normalizePhoneLink,
+		"sectionBlock": func(name string, r Resume) (string, error) {
+			var buf bytes.Buffer
+			if execErr := tpl.ExecuteTemplate(&buf, "section_"+name, r); execErr != nil {
+				return "", fmt.Errorf("render section %q: %w", name, execErr)
+			}
+			return buf.String(), nil
+		},
 	}).Parse(string(templateContent))
 	if err != nil {
 		return fmt.Errorf("parse template: %w", err)
@@ -220,6 +241,11 @@ func parseResume(data []byte) (Resume, error) {
 		return Resume{}, fmt.Errorf("unsupported resume version %d (current supported version is %d)", version, currentResumeVersion)
 	}
 
+	sectionOrder := raw.SectionOrder
+	if len(sectionOrder) == 0 {
+		sectionOrder = defaultSectionOrder
+	}
+
 	return Resume{
 		Version:                 version,
 		Name:                    raw.Name,
@@ -231,6 +257,7 @@ func parseResume(data []byte) (Resume, error) {
 		Github:                  raw.Github,
 		Template:                raw.Template,
 		Summary:                 raw.Summary,
+		SectionOrder:            sectionOrder,
 		Skills:                  raw.Skills,
 		Experience:              raw.Experience,
 		Projects:                raw.Projects,
@@ -357,7 +384,7 @@ func renderPDF(outputDir string) error {
 		if _, err := exec.LookPath(compiler); err == nil {
 			var cmd *exec.Cmd
 			if compiler == "tectonic" {
-				cmd = exec.Command(compiler, "--only-cached", "--outdir", outputDir, latexPath)
+				cmd = exec.Command(compiler, "--outdir", outputDir, latexPath)
 			} else {
 				cmd = exec.Command(compiler, "-interaction=nonstopmode", "-halt-on-error", "-output-directory", outputDir, latexPath)
 			}
@@ -384,7 +411,7 @@ func canCompile(compiler string) bool {
 func executeCompiler(compiler, latexPath, outputDir string) error {
 	var cmd *exec.Cmd
 	if compiler == "tectonic" {
-		cmd = exec.Command(compiler, "--only-cached", "--outdir", outputDir, latexPath)
+		cmd = exec.Command(compiler, "--outdir", outputDir, latexPath)
 	} else {
 		cmd = exec.Command(compiler, "-interaction=nonstopmode", "-halt-on-error", "-output-directory", outputDir, latexPath)
 	}

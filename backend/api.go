@@ -312,6 +312,10 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 // generateLatex renders resume data to LaTeX using template
 func generateLatex(resume Resume) (string, error) {
+	if len(resume.SectionOrder) == 0 {
+		resume.SectionOrder = defaultSectionOrder
+	}
+
 	templatePath, err := resolveResumeTemplatePath(resume.Template, "templates/enhanced-faang-resume.tex.tmpl")
 	if err != nil {
 		return "", err
@@ -322,12 +326,20 @@ func generateLatex(resume Resume) (string, error) {
 		return "", fmt.Errorf("read template file: %w", err)
 	}
 
-	tpl, err := texttemplate.New("resume").Funcs(texttemplate.FuncMap{
+	var tpl *texttemplate.Template
+	tpl, err = texttemplate.New("resume").Funcs(texttemplate.FuncMap{
 		"join":        joinStrings,
 		"latex":       escapeLatex,
 		"md":          markdownToLatex,
 		"profileLink": normalizeProfileLink,
 		"phoneLink":   normalizePhoneLink,
+		"sectionBlock": func(name string, r Resume) (string, error) {
+			var buf bytes.Buffer
+			if execErr := tpl.ExecuteTemplate(&buf, "section_"+name, r); execErr != nil {
+				return "", fmt.Errorf("render section %q: %w", name, execErr)
+			}
+			return buf.String(), nil
+		},
 	}).Parse(string(templateContent))
 	if err != nil {
 		return "", fmt.Errorf("parse template: %w", err)

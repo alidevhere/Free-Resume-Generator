@@ -9,7 +9,10 @@ import {
   getResume,
   saveResume,
 } from "@/lib/api-client";
-import { createEmptyResume } from "@/lib/resume-defaults";
+import {
+  createEmptyResume,
+  DEFAULT_SECTION_ORDER,
+} from "@/lib/resume-defaults";
 import { joinCsv, joinMultiline, splitCsv, splitMultiline } from "@/lib/format";
 import {
   Certification,
@@ -21,6 +24,7 @@ import {
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { ItemListEditor } from "@/components/editor/item-list-editor";
+import { SectionOrderEditor } from "@/components/editor/section-order-editor";
 import { SectionShell } from "@/components/editor/section-shell";
 import { Toast } from "@/components/ui/toast";
 
@@ -109,6 +113,9 @@ export function ResumeEditor({ resumeId }: Props) {
       projects: record.resume.projects || [],
       skills: record.resume.skills || [],
       certifications: record.resume.certifications || [],
+      sectionOrder: record.resume.sectionOrder?.length
+        ? record.resume.sectionOrder
+        : [...DEFAULT_SECTION_ORDER],
     };
     setResume(normalized);
   }
@@ -331,6 +338,13 @@ export function ResumeEditor({ resumeId }: Props) {
                   </option>
                 </select>
               </div>
+            </SectionShell>
+
+            <SectionShell title="Section Order">
+              <SectionOrderEditor
+                order={resume.sectionOrder}
+                onChange={(order) => patchResume({ sectionOrder: order })}
+              />
             </SectionShell>
 
             <SectionShell title="Personal Information">

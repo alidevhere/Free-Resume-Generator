@@ -1,3 +1,107 @@
+{{define "section_summary"}}
+{{if .Summary}}
+\section{Summary}
+{\fontsize{10pt}{12pt}\selectfont {{md .Summary}}}
+{{end}}
+{{end}}
+
+{{define "section_education"}}
+{{if .Education}}
+\section{Education}
+\resumeSubHeadingListStart
+{{- range .Education}}
+\resumeSubheading{ {{md .School}} }{ {{.Start}} -- {{.End}} }{ {{md .Degree}} }{ {{md .Location}} }
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+{{end}}
+
+{{define "section_experience"}}
+{{if .Experience}}
+\section{Experience}
+\resumeSubHeadingListStart
+{{- range .Experience}}
+\resumeSubheading{ {{md .Title}} }{ {{.Start}} -- {{.End}} }{ {{md .Company}} }{ {{md .Location}} }
+{{- if .Bullets}}
+\resumeItemListStart
+{{- range .Bullets}}
+\item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
+{{- end}}
+\end{itemize}
+{{- end}}
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+{{end}}
+
+{{define "section_projects"}}
+{{if .Projects}}
+\section{Projects}
+\resumeSubHeadingListStart
+{{- range .Projects}}
+{{- if .Link}}
+\resumeProjectHeading{ \href{{printf "{%s}" .Link}}{ {{md .Name}} } }{ {{md (join .Technologies ", ")}} }
+{{- else}}
+\resumeProjectHeading{ {{md .Name}} }{ {{md (join .Technologies ", ")}} }
+{{- end}}
+{{- if .Bullets}}
+\resumeItemListStart
+{{- range .Bullets}}
+\item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
+{{- end}}
+\end{itemize}
+{{- end}}
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+{{end}}
+
+{{define "section_openSource"}}
+{{if .OpenSourceContributions}}
+\section{Open Source Contributions}
+\resumeSubHeadingListStart
+{{- range .OpenSourceContributions}}
+{{- if .RepoLink}}\resumeOpenSourceHeading{ \href{{printf "{%s}" .RepoLink}}{ {{md .Name}} } }{ {{md .Description}} }{ {{md .Stars}} }{ {{md .Role}} }%
+{{- else}}\resumeOpenSourceHeading{ {{md .Name}} }{ {{md .Description}} }{ {{md .Stars}} }{ {{md .Role}} }%
+{{- end}}
+{{- if .Contribution}}
+\resumeItemListStart
+\item {\fontsize{10pt}{12pt}\selectfont {{md .Contribution}} }
+\end{itemize}
+{{- end}}
+{{- if .Link}}
+{\fontsize{10pt}{12pt}\selectfont\textit{ Contribution PR : \href{{printf "{%s}" .Link}}{ {{md .Link}} } }}\\
+{{- end}}
+{{- if .Keywords}}
+{\fontsize{10pt}{12pt}\selectfont\textit{ Keywords: {{md (join .Keywords ", ")}} }}\\
+{{- end}}
+{{- end}}
+\resumeSubHeadingListEnd
+{{end}}
+{{end}}
+
+{{define "section_skills"}}
+{{if .Skills}}
+\section{Technical Skills}
+\resumeItemListStart
+{{- range .Skills}}
+\item {\fontsize{10pt}{12pt}\selectfont \textbf{ {{md .Title}} }: {{range $index, $item := .Items}}{{if $index}}, {{end}}{{md $item}}{{end}} }
+{{- end}}
+\end{itemize}
+{{end}}
+{{end}}
+
+{{define "section_certifications"}}
+{{if .Certifications}}
+\section{Certifications}
+\resumeItemListStart
+{{- range .Certifications}}
+\item {\fontsize{10pt}{12pt}\selectfont {{md .Name}} }
+{{- end}}
+\end{itemize}
+{{end}}
+{{end}}
+
 % enhanced FAANG resume template
 \documentclass[letterpaper,11pt]{article}
 
@@ -107,94 +211,6 @@
 
 \vspace{-0.4em}
 
-{{if .Summary}}
-\section{Summary}
-{\fontsize{10pt}{12pt}\selectfont {{md .Summary}}}
-{{end}}
-
-{{if .Education}}
-\section{Education}
-\resumeSubHeadingListStart
-{{- range .Education}}
-\resumeSubheading{ {{md .School}} }{ {{.Start}} -- {{.End}} }{ {{md .Degree}} }{ {{md .Location}} }
-{{- end}}
-\resumeSubHeadingListEnd
-{{end}}
-
-{{if .Experience}}
-\section{Experience}
-\resumeSubHeadingListStart
-{{- range .Experience}}
-\resumeSubheading{ {{md .Title}} }{ {{.Start}} -- {{.End}} }{ {{md .Company}} }{ {{md .Location}} }
-{{- if .Bullets}}
-\resumeItemListStart
-{{- range .Bullets}}
-\item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
-{{- end}}
-\end{itemize}
-{{- end}}
-{{- end}}
-\resumeSubHeadingListEnd
-{{end}}
-
-{{if .Projects}}
-\section{Projects}
-\resumeSubHeadingListStart
-{{- range .Projects}}
-{{- if .Link}}
-\resumeProjectHeading{ \href{{printf "{%s}" .Link}}{ {{md .Name}} } }{ {{md (join .Technologies ", ")}} }
-{{- else}}
-\resumeProjectHeading{ {{md .Name}} }{ {{md (join .Technologies ", ")}} }
-{{- end}}
-{{- if .Bullets}}
-\resumeItemListStart
-{{- range .Bullets}}
-\item {\fontsize{10pt}{12pt}\selectfont {{md .}} }
-{{- end}}
-\end{itemize}
-{{- end}}
-{{- end}}
-\resumeSubHeadingListEnd
-{{end}}
-
-{{if .OpenSourceContributions}}
-\section{Open Source Contributions}
-\resumeSubHeadingListStart
-{{- range .OpenSourceContributions}}
-{{- if .RepoLink}}\resumeOpenSourceHeading{ \href{{printf "{%s}" .RepoLink}}{ {{md .Name}} } }{ {{md .Description}} }{ {{md .Stars}} }{ {{md .Role}} }%
-{{- else}}\resumeOpenSourceHeading{ {{md .Name}} }{ {{md .Description}} }{ {{md .Stars}} }{ {{md .Role}} }%
-{{- end}}
-{{- if .Contribution}}
-\resumeItemListStart
-\item {\fontsize{10pt}{12pt}\selectfont {{md .Contribution}} }
-\end{itemize}
-{{- end}}
-{{- if .Link}}
-{\fontsize{10pt}{12pt}\selectfont\textit{ Contribution PR : \href{{printf "{%s}" .Link}}{ {{md .Link}} } }}\\
-{{- end}}
-{{- if .Keywords}}
-{\fontsize{10pt}{12pt}\selectfont\textit{ Keywords: {{md (join .Keywords ", ")}} }}\\
-{{- end}}
-{{- end}}
-\resumeSubHeadingListEnd
-{{end}}
-
-{{if .Skills}}
-\section{Technical Skills}
-\resumeItemListStart
-{{- range .Skills}}
-\item {\fontsize{10pt}{12pt}\selectfont \textbf{ {{md .Title}} }: {{range $index, $item := .Items}}{{if $index}}, {{end}}{{md $item}}{{end}} }
-{{- end}}
-\end{itemize}
-{{end}}
-
-{{if .Certifications}}
-\section{Certifications}
-\resumeItemListStart
-{{- range .Certifications}}
-\item {\fontsize{10pt}{12pt}\selectfont {{md .Name}} }
-{{- end}}
-\end{itemize}
-{{end}}
+{{range .SectionOrder}}{{sectionBlock . $}}{{end}}
 
 \end{document}

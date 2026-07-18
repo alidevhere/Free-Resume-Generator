@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /out/resume-generator .
 FROM alpine:3.20
 
 ENV TECTONIC_VERSION=0.16.9
-ENV TECTONIC_CACHE_DIR=/var/cache/tectonic
+ENV XDG_CACHE_HOME=/var/cache
 
 RUN apk add --no-cache \
     ca-certificates \
@@ -25,7 +25,7 @@ RUN apk add --no-cache \
     && tar -xzf /tmp/tectonic.tar.gz -C /usr/local/bin tectonic \
     && chmod +x /usr/local/bin/tectonic \
     && rm /tmp/tectonic.tar.gz \
-    && mkdir -p "${TECTONIC_CACHE_DIR}" /tmp/tectonic-warmup
+    && mkdir -p "/var/cache/Tectonic" /tmp/tectonic-warmup
 
 COPY --from=builder /out/resume-generator /usr/local/bin/resume-generator
 WORKDIR /app
@@ -38,7 +38,7 @@ RUN resume-generator \
     -output /tmp/tectonic-warmup \
     -format latex
 
-# Warm the Tectonic cache
+# Warm the Tectonic cache (downloads fonts and packages into XDG_CACHE_HOME/Tectonic)
 RUN set -eux; \
     if tectonic \
     --outdir /tmp/tectonic-warmup \
@@ -46,21 +46,10 @@ RUN set -eux; \
     echo "Tectonic cache warmup succeeded."; \
     else \
     echo "WARNING: Tectonic cache warmup failed (likely DNS/network)." >&2; \
-    echo "WARNING: Runtime PDF generation with --only-cached may fail until cache is primed." >&2; \
+    echo "WARNING: First runtime PDF generation will require network access." >&2; \
     fi
 
-# Verify everything is cached
-RUN set -eux; \
-    if tectonic \
-    --only-cached \
-    --outdir /tmp/tectonic-warmup \
-    /tmp/tectonic-warmup/resume.tex; then \
-    echo "Verified Tectonic cache is ready for offline runs."; \
-    else \
-    echo "WARNING: Offline cache verification skipped; continuing image build." >&2; \
-    fi
-
-# Clean up
+# Clean up temp files (cache stays in /var/cache/Tectonic)
 RUN rm -rf /tmp/tectonic-warmup
 
 EXPOSE 8080
