@@ -9,6 +9,7 @@
   "github": "alidevhere",
   "website": "alidevhere.com",
   "summary": "Senior Backend Engineer with 5+ years of experience designing, building, and scaling **distributed systems**, **microservices**, **REST APIs**, and **gRPC services** in **Go**. Experienced in **cloud-native backend development** using **AWS**, **Docker**, **Kubernetes**, **MySQL**, **MongoDB**, and **Redis**, with a strong focus on **performance optimization**, **system reliability**, and **scalable software architecture** across production telecom and contact-center platforms.",
+
   "skills": [
     {
       "title": "Core",
@@ -76,6 +77,7 @@
       ]
     }
   ],
+
   "experience": [
     {
       "company": "Contact Center Specialists",
@@ -133,29 +135,61 @@
       ]
     }
   ],
-  "projects": [
+
+  "openSourceContributions": [
     {
-      "name": "Helium",
-      "link": "https://heliumapp.com",
-      "technologies": [
-        "Golang",
-        "AWS",
-        "GCP",
-        "FreeSwitch",
-        "MySQL",
-        "MongoDB",
-        "gRPC",
-        "REST APIs",
-        "Unit Testing",
-        "GORM",
-        "Echo"
-      ],
-      "bullets": [
-        "Centralized **cloud-native platform** providing tools and workflows for **telecom** and **contact-center** operations, supporting **multi-tenant** architecture and **high-availability** deployments.",
-        "Designed and implemented **scalable Go microservices** supporting **telecom infrastructure**, **campaign management**, and **contact-center workflows** across **AWS** and **GCP**.",
-        "Designed **REST and gRPC APIs** integrating **telecom infrastructure**, **campaign management**, **ASR systems**, and **internal platform services**, enabling **seamless inter-service communication**."
-      ]
+      "name": "Gorm",
+      "description": "orm for golang",
+      "role": "Contributor",
+      "contribution": "Fixed **PostgreSQL identifier length handling** in GORM, improving compatibility with **PostgreSQL naming constraints** and enabling support for **long table/column names**.",
+      "link": "https://github.com/go-gorm/gorm/pull/6337/files",
+      "repoLink": "https://github.com/go-gorm/gorm",
+      "stars": "39.9k",
+      "keywords": []
     },
+    {
+      "name": "Go GitHub",
+      "description": "github sdk in golang",
+      "role": "Contributor",
+      "contribution": "Added **GitHub Actions cache API support** to the official Go SDK with **comprehensive end-to-end API coverage**, **unit tests**, and **integration tests**, improving cache management capabilities for CI/CD workflows.",
+      "link": "https://github.com/google/go-github/pull/2604/files",
+      "repoLink": "https://github.com/google/go-github",
+      "stars": "11.3k",
+      "keywords": []
+    },
+    {
+      "name": "Postgres GORM Driver",
+      "description": "gorm postgresql driver",
+      "role": "Contributor",
+      "contribution": "Contributed to fixing **PostgreSQL SQL identifier length constraints**, ensuring compatibility with **PostgreSQL naming standards** and enabling seamless **database schema management**.",
+      "link": "https://github.com/go-gorm/postgres/pull/120",
+      "repoLink": "https://github.com/go-gorm/postgres",
+      "stars": "293",
+      "keywords": []
+    },
+    {
+      "name": "Larry",
+      "description": "twitter bot written in golang",
+      "role": "Contributor",
+      "contribution": "Contributed a feature for displaying **repository creation dates** in tweet metadata, enhancing **GitHub repository insights** in social media integration.",
+      "link": "https://github.com/ezeoleaf/larry/pull/122/files",
+      "repoLink": "https://github.com/ezeoleaf/larry",
+      "stars": "170",
+      "keywords": []
+    },
+    {
+      "name": "CSV Column Extractor",
+      "description": "golang package to manipulate CSV files.",
+      "role": "Maintainer",
+      "contribution": "Created and open-sourced a **memory-efficient Go package** for **streaming extraction** of selected columns from **large-scale CSV datasets**, enabling **fast data processing** without loading entire files into memory.",
+      "link": "",
+      "repoLink": "https://github.com/alidevhere/csv-column-extractor",
+      "stars": "2",
+      "keywords": ["golang", "csv", "data processing", "streaming", "memory-efficient"]
+    }
+  ],
+
+  "projects": [
     {
       "name": "Swipe Shop",
       "link": "https://github.com/alidevhere/swipe-shop",
@@ -196,44 +230,9 @@
         "Created a **healthcare e-commerce platform** for medicines with **order management**, **real-time inventory tracking**, **stock notifications**, and **order status updates**.",
         "Implemented **authentication**, **user accounts**, **payment integration**, and **inventory management** systems, delivering a **secure and intuitive** ordering experience."
       ]
-    },
-    {
-      "name": "Twitter Rumors Detection",
-      "link": "https://github.com/alidevhere/twitter-rumors",
-      "technologies": [
-        "Python",
-        "Deep Learning",
-        "Keras",
-        "Tensorflow"
-      ],
-      "bullets": [
-        "Developed a **machine-learning** project for detecting rumors on Twitter using an **ensemble of neural networks**.",
-        "Applied advanced **deep-learning** techniques to improve **classification accuracy**."
-      ]
-    },
-    {
-      "name": "Certificate Generator",
-      "link": "https://github.com/alidevhere/certificate-generator",
-      "technologies": [
-        "C#",
-        "Desktop Application",
-        ".NET"
-      ],
-      "bullets": [
-        "Built an application for **generating certificates** from a provided template.",
-        "Delivered a lightweight **desktop solution** for **document generation** workflows."
-      ]
     }
   ],
-  "education": [
-    {
-      "school": "University of Engineering and Technology, Lahore",
-      "degree": "Bachelor of Science in Computer Science",
-      "location": "Lahore, Pakistan",
-      "start": "2018",
-      "end": "2022"
-    }
-  ],
+
   "certifications": [
     {
       "name": "AWS Certified Developer Associate"
@@ -242,55 +241,14 @@
       "name": "Azure Fundamentals (AZ-900)"
     }
   ],
-  "openSourceContributions": [
+
+  "education": [
     {
-      "name": "Go GitHub",
-      "description": "github sdk in golang",
-      "role": "Contributor",
-      "contribution": "Added **GitHub Actions cache API support** to the official Go SDK with **comprehensive end-to-end API coverage**, **unit tests**, and **integration tests**, improving cache management capabilities for CI/CD workflows.",
-      "link": "https://github.com/google/go-github/pull/2604/files",
-      "repoLink": "https://github.com/google/go-github",
-      "stars": "11.3k",
-      "keywords": []
-  },
-  {
-    "name": "Gorm",
-    "description": "orm for golang",
-    "role": "Contributor",
-    "contribution": "Fixed **PostgreSQL identifier length handling** in GORM, improving compatibility with **PostgreSQL naming constraints** and enabling support for **long table/column names**.",
-    "link": "https://github.com/go-gorm/gorm/pull/6337/files",
-    "repoLink": "https://github.com/go-gorm/gorm",
-    "stars": "39.9k",
-    "keywords": []
-  },
-  {
-    "name": "Postgres GORM Driver",
-    "description": "gorm postgresql driver",
-    "role": "Contributor",
-    "contribution": "Contributed to fixing **PostgreSQL SQL identifier length constraints**, ensuring compatibility with **PostgreSQL naming standards** and enabling seamless **database schema management**.",
-    "link": "https://github.com/go-gorm/postgres/pull/120",
-    "repoLink": "https://github.com/go-gorm/postgres",
-    "stars": "293",
-    "keywords": []
-  },
-  {
-    "name": "Larry",
-    "description": "twitter bot written in golang",
-    "role": "Contributor",
-    "contribution": "Contributed a feature for displaying **repository creation dates** in tweet metadata, enhancing **GitHub repository insights** in social media integration.",
-    "link": "https://github.com/ezeoleaf/larry/pull/122/files",
-    "repoLink": "https://github.com/ezeoleaf/larry",
-    "stars": "170",
-    "keywords": []
-  },
-  {
-    "name": "CSV Column Extractor",
-    "description": "golang package to manipulate CSV files.",
-    "role": "Maintainer",
-    "contribution": "Created and open-sourced a **memory-efficient Go package** for **streaming extraction** of selected columns from **large-scale CSV datasets**, enabling **fast data processing** without loading entire files into memory.",
-    "link": "",
-    "repoLink": "https://github.com/alidevhere/csv-column-extractor",
-    "stars": "2",
-    "keywords": ["golang", "csv", "data processing", "streaming", "memory-efficient"]
-  }]
+      "school": "University of Engineering and Technology, Lahore",
+      "degree": "Bachelor of Science in Computer Science",
+      "location": "Lahore, Pakistan",
+      "start": "2018",
+      "end": "2022"
+    }
+  ]
 }

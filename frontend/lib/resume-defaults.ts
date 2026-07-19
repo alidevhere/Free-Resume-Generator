@@ -2,12 +2,12 @@ import { Resume } from "@/lib/types";
 
 export const DEFAULT_SECTION_ORDER = [
   "summary",
-  "education",
-  "experience",
-  "projects",
-  "openSource",
   "skills",
+  "experience",
+  "openSource",
+  "projects",
   "certifications",
+  "education",
 ];
 
 export function createEmptyResume(): Resume {

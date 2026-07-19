@@ -23,12 +23,12 @@ var resumeTemplatePaths = map[string]string{
 
 var defaultSectionOrder = []string{
 	"summary",
-	"education",
-	"experience",
-	"projects",
-	"openSource",
 	"skills",
+	"experience",
+	"openSource",
+	"projects",
 	"certifications",
+	"education",
 }
 
 type Resume struct {
