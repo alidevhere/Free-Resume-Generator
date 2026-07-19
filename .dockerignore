@@ -1,9 +1,16 @@
+# Version control
 .git
 .gitignore
+
+# Editor / OS
+.vscode
+.idea
+.DS_Store
+
+# Build outputs & caches
 output
 *.pdf
 *.tex
-resume-api
 *.log
 *.aux
 *.out
@@ -11,3 +18,20 @@ resume-api
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+# Go build artifacts
+resume-api
+resume-generator
+
+# Frontend build artifacts (rebuilt inside the image)
+frontend/node_modules
+frontend/.next
+frontend/tsconfig.tsbuildinfo
+
+# Tauri / desktop build artifacts (not needed for Docker web image)
+frontend/src-tauri/target
+frontend/src-tauri/gen
+
+# Local data (do not bake host DB into the image)
+backend/data
+data

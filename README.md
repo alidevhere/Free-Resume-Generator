@@ -107,38 +107,90 @@ Default locations:
 
 In backend-only mode (without the desktop shell), the default database path is `backend/data/resumes.db` unless overridden with `-db`.
 
-## Docker (Single Command: Frontend + Backend)
+## Docker (Single Image: Frontend + Backend)
 
-From the project root, run:
+The root `Dockerfile` builds a single image containing both the Go backend and the Next.js frontend. The backend listens on an internal port (`8080`) and is not published to the host; all API traffic is proxied through the Next.js server on port `3000`.
+
+### Quick Start (Single Command)
+
+Pull the prebuilt image from ghcr.io and run it with persistent storage in one command (`--pull always` ensures the latest image is fetched before running):
 
 ```bash
-docker compose up --build
+mkdir -p ./data && docker run -d --name resume-generator --pull always \
+  -p 3000:3000 \
+  -v "$(pwd)/data:/app/backend/data" \
+  ghcr.io/alidevhere/free-resume-generator:latest
 ```
 
-Then open:
+Then open `http://localhost:3000`. The SQLite database will be created at `./data/resumes.db` on the host and persists across container restarts. See the [Pull the Prebuilt Image](#pull-the-prebuilt-image-from-ghcrio) section below for stop/restart/remove instructions.
 
-- Frontend: `http://localhost:3000`
+### Pull the Prebuilt Image from ghcr.io
 
-In Docker Compose, backend is not published to host ports. APIs are accessible through frontend routes only (`http://localhost:3000/api/*`).
+A prebuilt multi-arch image (`linux/amd64`, `linux/arm64`) is published to the GitHub Container Registry, so you don't need to build it yourself:
 
-The backend image pre-caches Tectonic bundles during build, so PDF generation works even if the running container has no internet access.
+```bash
+docker pull ghcr.io/alidevhere/free-resume-generator:latest
+```
 
-## Docker (Backend Only)
+Run it with a persistent volume so your resumes survive container restarts:
 
-Build the image:
+```bash
+mkdir -p ./data
+docker run -d --name resume-generator \
+  -p 3000:3000 \
+  -v "$(pwd)/data:/app/backend/data" \
+  ghcr.io/alidevhere/free-resume-generator:latest
+```
+
+Then open `http://localhost:3000`. The SQLite database will be created at `./data/resumes.db` on the host.
+
+To stop and restart later (data persists via the volume):
+
+```bash
+docker stop resume-generator
+docker start resume-generator
+```
+
+To remove the container when you no longer need it:
+
+```bash
+docker rm -f resume-generator
+```
+
+### Build the Image Locally
+
+Build the image from the project root:
+
+```bash
+docker build -t free-resume-generator .
+```
+
+Run it (ephemeral storage — the SQLite database is discarded when the container stops):
+
+```bash
+docker run --rm -p 3000:3000 free-resume-generator
+```
+
+Then open `http://localhost:3000`. API calls are available at `http://localhost:3000/api/*`.
+
+The image pre-warms the Tectonic cache during build, so PDF generation works even if the running container has no internet access.
+
+### Persisting Data
+
+To keep resumes between runs, mount a host directory to `/app/backend/data`:
+
+```bash
+mkdir -p ./data
+docker run --rm -p 3000:3000 -v "$(pwd)/data:/app/backend/data" free-resume-generator
+```
+
+The SQLite database will be created at `./data/resumes.db` on the host.
+
+### Backend-Only Image
+
+If you only need the API server (no frontend), build the backend image directly:
 
 ```bash
 docker build -t resume-generator ./backend
-```
-
-Start the backend:
-
-```bash
-docker run --rm -p 8080:8080 resume-generator
-```
-
-Run backend only with Docker:
-
-```bash
 docker run --rm -p 8080:8080 resume-generator
 ```
