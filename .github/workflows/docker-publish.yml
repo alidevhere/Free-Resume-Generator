@@ -1,0 +1,74 @@
+name: Build and Publish Docker Image to ghcr.io
+
+# This workflow builds the unified Docker image (Go backend + Next.js frontend
+# + Tectonic LaTeX engine) from the root Dockerfile and publishes it to the
+# GitHub Container Registry (ghcr.io) whenever code is pushed to `main`.
+#
+# The published image is:
+#   ghcr.io/alidevhere/free-resume-generator
+#
+# NOTE: New GitHub packages inherit the repository's visibility by default.
+# If this repo is public and you want the image to be public too, flip the
+# package visibility under: GitHub → Your profile → Packages →
+# free-resume-generator → Package settings → Change visibility.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # allows manual re-runs from the Actions tab
+
+# Required permissions for pushing to ghcr.io using the auto-provided GITHUB_TOKEN.
+# No manual secret configuration is needed.
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  # Lowercased owner/repo name — ghcr.io requires lowercase image names.
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (for multi-arch builds)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # Short commit SHA (always set)
+            type=sha,format=short
+            # `latest` on the default branch (main)
+            type=raw,value=latest,enable={{is_default_branch}}
+            # branch name (e.g. `main`)
+            type=ref,event=branch
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
