@@ -1,248 +1,331 @@
-## Architecture
+<div align="center">
 
-This project now supports a split frontend/backend setup:
+# 📄 Free Resume Generator
 
-- Go backend API (existing service)
-- Next.js frontend UI (new app under `frontend/`)
+### Create FAANG-grade, ATS-friendly resumes in minutes — 100% free, 100% local.
 
-The frontend calls the backend API for resume CRUD and PDF/LaTeX generation.
+[![Docker](https://img.shields.io/badge/runs%20on-Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Multi-arch](https://img.shields.io/badge/arch-amd64%20%7C%20arm64-blue)](https://github.com/alidevhere/Free-Resume-Generator/pkgs/container/free-resume-generator)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Go](https://img.shields.io/badge/backend-Go-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Next.js](https://img.shields.io/badge/frontend-Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
 
-The backend is API-only and does not serve UI assets.
+**A free, open-source resume generator with a live preview editor and one-click PDF export.**
+**No sign-ups. No telemetry. No data leaving your machine. Just a polished resume.**
 
-## Run Backend (Go API)
+</div>
 
-Start the API server:
+---
 
-```bash
-cd backend
-go run . -server :8080
-```
+## ✨ Why Free Resume Generator?
 
-For CLI generation from a JSON file, you can choose output type:
+Most resume builders lock the good stuff behind paywalls, watermarks, or mandatory accounts. This project flips that model:
 
-```bash
-cd backend
-go run . -input resume.json -output output -format latex
-go run . -input resume.json -output output -format pdf
-go run . -input resume.json -output output -format both
-```
+- 🎯 **FAANG-grade templates** — LaTeX-based layouts engineered to sail through ATS (Applicant Tracking System) filters.
+- 👁️ **Live preview** — Watch your resume take shape in real time as you type.
+- 📄 **One-click PDF export** — Pixel-perfect PDFs rendered by the Tectonic LaTeX engine.
+- 🗂️ **Multiple resumes** — Tailor a different resume for every job application.
+- 🧩 **Reorderable sections** — Rearrange experience, skills, projects, and education however you like.
+- 💾 **One-click save** — Save your resume to a local SQLite database with a single click, or export it as JSON.
+- 🔒 **Local-first & private** — Your data lives on your machine, never in the cloud.
+- 🐳 **Docker-first** — One command to run the entire app. No installers, no dependencies to chase.
+- 📶 **Offline PDF generation** — The Tectonic LaTeX cache is pre-warmed at image build time, so PDF export works even with no internet access.
 
-Available API endpoints include:
+> Built for job seekers who want a professional resume without the subscription tax.
 
-- `GET /api/resumes`
-- `POST /api/resumes`
-- `GET /api/resumes/{id}`
-- `PUT /api/resumes/{id}`
-- `DELETE /api/resumes/{id}`
-- `POST /api/resume/pdf`
-- `POST /api/resume/latex`
+---
 
-## Run Frontend (Next.js)
+## 📸 Screenshots
 
-Install dependencies:
+<table>
+  <tr>
+    <td width="100%" align="center"><b>Welcome Page</b> — your resume library, where you create, open, or import resumes</td>
+  </tr>
+  <tr>
+    <td width="100%" align="center"><img src="media/welcome_page.png" alt="Welcome page — resume library" /></td>
+  </tr>
+  <tr>
+    <td width="100%" align="center"><b>Resume Builder</b> — edit your resume with a live PDF preview side-by-side</td>
+  </tr>
+  <tr>
+    <td width="100%" align="center"><img src="media/resume_builder_page.png" alt="Resume builder page — editor with live PDF preview" /></td>
+  </tr>
+</table>
 
-```bash
-cd frontend
-npm install
-```
+---
 
-Set API base URL only if you need to bypass the frontend proxy.
+## 🛠️ Tech Stack
 
-By default, the frontend calls relative `/api/*` routes and Next.js proxies them to the backend.
+| Layer      | Technology                                        |
+| ---------- | ------------------------------------------------- |
+| Backend    | Go, `net/http`, SQLite (`modernc.org/sqlite`)     |
+| Frontend   | Next.js 15, React 19, TypeScript                  |
+| PDF Engine | Tectonic (modern, self-contained LaTeX engine)    |
+| Packaging  | Docker (multi-arch: `linux/amd64`, `linux/arm64`) |
 
-```bash
-export NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
-```
+---
 
-Run the frontend:
+## 📋 Prerequisites
 
-```bash
-npm run dev
-```
+To run Free Resume Generator, all you need is **Docker**. That's it — no Go, Node.js, or LaTeX to install.
 
-Open `http://localhost:3000` in your browser.
+| Tool               | Required?   | Why                                                   | Install                                                                     |
+| ------------------ | ----------- | ----------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Docker Engine**  | ✅ Required | Runs the container image                              | [docs.docker.com/engine/install](https://docs.docker.com/engine/install/)   |
+| **Docker Compose** | ⚙️ Optional | Only if you prefer `docker compose` over `docker run` | [docs.docker.com/compose/install](https://docs.docker.com/compose/install/) |
 
-## Frontend Scripts
+> 💡 **Tip:** Docker Desktop (macOS/Windows) and Docker Engine (Linux) both include Compose out of the box.
 
-From `frontend/`:
-
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run typecheck
-```
-
-## Desktop App (Tauri)
-
-This repository includes a Tauri desktop shell in `frontend/src-tauri`.
-
-- The frontend is exported as static assets for desktop builds.
-- The Go backend is compiled as a bundled sidecar binary and auto-started by Tauri.
-- End users install a single desktop app bundle and do not need Docker, Go, or Node installed.
-
-From `frontend/`:
+Verify your setup before continuing:
 
 ```bash
-npm install
-npm run tauri:dev
+docker --version
+docker compose version   # optional
 ```
 
-To create an installable desktop bundle:
+---
 
-```bash
-npm run tauri:build
-```
+## 🚀 Quick Start
 
-## Desktop Data Storage (SQLite)
+The image is published to the GitHub Container Registry and supports both `amd64` (Intel/AMD) and `arm64` (Apple Silicon / ARM) machines. The container exposes port **`3000`** — the Next.js frontend serves the UI and proxies API calls to the Go backend running inside the same container.
 
-When users install the desktop app, resumes are stored in a per-user SQLite database named `resumes.db` under the app data directory for your Tauri app identifier (`com.free.resume.generator`).
+### Option 1 — Run with `docker run` (fastest)
 
-Default locations:
-
-- macOS: `~/Library/Application Support/com.free.resume.generator/resumes.db`
-- Windows: `%AppData%\\com.free.resume.generator\\resumes.db`
-- Linux: `~/.local/share/com.free.resume.generator/resumes.db`
-
-In backend-only mode (without the desktop shell), the default database path is `backend/data/resumes.db` unless overridden with `-db`.
-
-## Docker (Single Image: Frontend + Backend)
-
-The root `Dockerfile` builds a single image containing both the Go backend and the Next.js frontend. The backend listens on an internal port (`8080`) and is not published to the host; all API traffic is proxied through the Next.js server on port `3000`.
-
-### Quick Start (Single Command)
-
-Pull the prebuilt image from ghcr.io and run it with persistent storage in one command (`--pull always` ensures the latest image is fetched before running):
+Pull the prebuilt image and run it with persistent storage in one command (`--pull always` ensures the latest image is fetched before running):
 
 ```bash
 mkdir -p ./data && docker run -d --name resume-generator --pull always \
   -p 3000:3000 \
   -v "$(pwd)/data:/app/backend/data" \
+  --restart unless-stopped \
   ghcr.io/alidevhere/free-resume-generator:latest
 ```
 
-Then open `http://localhost:3000`. The SQLite database will be created at `./data/resumes.db` on the host and persists across container restarts. See the [Pull the Prebuilt Image](#pull-the-prebuilt-image-from-ghcrio) section below for stop/restart/remove instructions.
+Then open **[http://localhost:3000](http://localhost:3000)** in your browser. 🎉
 
-### Pull the Prebuilt Image from ghcr.io
+The SQLite database will be created at `./data/resumes.db` on your host and persists across container restarts.
 
-A prebuilt multi-arch image (`linux/amd64`, `linux/arm64`) is published to the GitHub Container Registry, so you don't need to build it yourself:
+### Option 2 — Run with Docker Compose
 
 ```bash
-docker pull ghcr.io/alidevhere/free-resume-generator:latest
+# Clone the repository
+git clone https://github.com/alidevhere/Free-Resume-Generator.git
+cd Free-Resume-Generator
+
+# Start the stack (frontend on :3000, backend on internal :8080)
+docker compose up -d
 ```
 
-Run it with a persistent volume so your resumes survive container restarts:
+Then open **[http://localhost:3000](http://localhost:3000)** in your browser. 🎉
+
+### Managing the container
 
 ```bash
-mkdir -p ./data
-docker run -d --name resume-generator \
-  -p 3000:3000 \
-  -v "$(pwd)/data:/app/backend/data" \
-  ghcr.io/alidevhere/free-resume-generator:latest
-```
+# View logs
+docker logs -f resume-generator
 
-Then open `http://localhost:3000`. The SQLite database will be created at `./data/resumes.db` on the host.
-
-To stop and restart later (data persists via the volume):
-
-```bash
+# Stop the app
 docker stop resume-generator
+
+# Start it again (data is preserved in the volume)
 docker start resume-generator
+
+# Update to the latest image
+docker pull ghcr.io/alidevhere/free-resume-generator:latest
+docker rm -f resume-generator
+# …then re-run the `docker run` command above
+
+# Remove everything (including saved resumes)
+docker rm -f resume-generator
+rm -rf ./data
 ```
 
-To remove the container when you no longer need it:
+---
+
+## ⚙️ Configuration
+
+The container is configurable via environment variables. All values are optional.
+
+| Variable          | Default                 | Description                                                          |
+| ----------------- | ----------------------- | -------------------------------------------------------------------- |
+| `FRONTEND_PORT`   | `3000`                  | Port the Next.js frontend listens on (this is the port you expose).  |
+| `BACKEND_PORT`    | `:8080`                 | Port the internal Go backend API listens on (rarely needs changing). |
+| `BACKEND_API_URL` | `http://127.0.0.1:8080` | URL the frontend uses to reach the backend (used at build time).     |
+
+### Run on a custom host port
+
+The simplest way to use a different host port is to change the `-p` mapping — no env var changes needed:
 
 ```bash
-docker rm -f resume-generator
+docker run -d \
+  --name resume-generator \
+  -p 8080:3000 \
+  -v "$(pwd)/data:/app/backend/data" \
+  --restart unless-stopped \
+  ghcr.io/alidevhere/free-resume-generator:latest
 ```
 
-### Build the Image Locally
+Then visit **[http://localhost:8080](http://localhost:8080)**.
 
-Build the image from the project root:
+---
+
+## 💾 Data Persistence
+
+Your resumes are stored in a **SQLite database** at `/app/backend/data/resumes.db` inside the container. To keep them across restarts and updates, **always mount a volume**:
+
+```bash
+-v "$(pwd)/data:/app/backend/data"
+```
+
+- The database file (`resumes.db`) is created automatically on first run.
+- To back up your resumes, simply copy the `./data` directory (or the volume) to a safe location.
+- To reset everything, stop the container and delete the `./data` directory.
+
+---
+
+## 🧱 Project Structure
+
+```
+Free-Resume-Generator/
+├── backend/               # Go backend (API + LaTeX PDF rendering)
+│   ├── main.go            # CLI + HTTP server entry point
+│   ├── api.go             # REST API handlers
+│   ├── db.go              # SQLite-backed resume store
+│   ├── resume.json        # Seed/default resume
+│   └── templates/         # LaTeX templates
+│       └── enhanced-faang-resume.tex.tmpl
+├── frontend/              # Next.js frontend
+│   ├── app/               # App router pages (library + editor)
+│   ├── components/        # React components (editor, UI, library)
+│   ├── lib/               # Types, API client, defaults, formatting
+│   └── next.config.mjs    # Proxies /api/* to the backend
+├── Dockerfile             # Multi-stage build (Go + Next.js + Tectonic)
+├── docker-compose.yml     # Docker Compose configuration
+├── docker-entrypoint.sh   # Starts backend + frontend in one container
+├── media/                 # Screenshots used in this README
+└── README.md
+```
+
+---
+
+## 🧑‍💻 For Developers (Run from Source)
+
+<details>
+<summary>🔧 Local development setup</summary>
+
+#### Prerequisites
+
+- **Go** 1.25+
+- **Node.js** 20+
+- **Tectonic** (LaTeX engine) — for PDF export ([tectonic-typesetting.github.io](https://tectonic-typesetting.github.io/))
+
+#### Steps
+
+1. **Start the backend** (serves the API on `:8080`):
+
+   ```bash
+   cd backend
+   go run . -server :8080
+   ```
+
+2. **Start the frontend** (in a separate terminal):
+
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+3. Open **[http://localhost:3000](http://localhost:3000)** for the frontend.
+4. The frontend proxies `/api/*` requests to the backend automatically (see `next.config.mjs`).
+
+#### Backend CLI (one-off generation)
+
+You can also generate a resume directly from a JSON file without running the server:
+
+```bash
+cd backend
+go run . -input resume.json -output output -format latex   # LaTeX only
+go run . -input resume.json -output output -format pdf     # PDF only
+go run . -input resume.json -output output -format both     # LaTeX + PDF
+```
+
+</details>
+
+---
+
+## 📦 Docker Image
+
+The image is built automatically by GitHub Actions (`.github/workflows/docker-publish.yml`) and published to the GitHub Container Registry:
+
+```
+ghcr.io/alidevhere/free-resume-generator:latest
+```
+
+- **Supported architectures:** `linux/amd64`, `linux/arm64`
+- **Tags:** `latest` (on every push to `main`), plus the short commit SHA and branch name.
+- **Source:** [github.com/alidevhere/Free-Resume-Generator](https://github.com/alidevhere/Free-Resume-Generator)
+
+### Build the image locally
+
+If you'd rather build from source instead of pulling the prebuilt image:
 
 ```bash
 docker build -t free-resume-generator .
-```
-
-Run it (ephemeral storage — the SQLite database is discarded when the container stops):
-
-```bash
-docker run --rm -p 3000:3000 free-resume-generator
-```
-
-Then open `http://localhost:3000`. API calls are available at `http://localhost:3000/api/*`.
-
-The image pre-warms the Tectonic cache during build, so PDF generation works even if the running container has no internet access.
-
-### Persisting Data
-
-To keep resumes between runs, mount a host directory to `/app/backend/data`:
-
-```bash
-mkdir -p ./data
 docker run --rm -p 3000:3000 -v "$(pwd)/data:/app/backend/data" free-resume-generator
 ```
 
-The SQLite database will be created at `./data/resumes.db` on the host.
+### Backend-only image
 
-### Backend-Only Image
-
-If you only need the API server (no frontend), build the backend image directly:
-
-```bash
-docker build -t resume-generator ./backend
-docker run --rm -p 8080:8080 resume-generator
-```
-
-### Build Individual Images and Run with Docker Compose
-
-The `docker-compose.yml` defines two services — `backend` (image `resume-generator-backend`) and `frontend` (image `resume-generator-frontend`) — that are wired together over the compose network (the frontend talks to the backend at `http://backend:8080`).
-
-You can build either image independently and then bring the stack up with `docker compose`. Compose will reuse the image you built instead of rebuilding it.
-
-**Build only the backend image:**
-
-```bash
-docker compose build backend
-```
-
-**Build only the frontend image:**
-
-```bash
-docker compose build frontend
-```
-
-**Build both images:**
-
-```bash
-docker compose build
-```
-
-**Run the stack (uses the images built above):**
-
-```bash
-docker compose up
-```
-
-Open `http://localhost:3000` in your browser. The frontend is published on port `3000` and proxies API calls to the backend service.
-
-If you only want to run a single service (e.g. just the frontend, assuming the backend is already running or reachable elsewhere), use:
-
-```bash
-docker compose up frontend
-```
-
-> Note: the `frontend` service declares `depends_on: [backend]`, so `docker compose up frontend` will also start the backend. To run the frontend against an external backend instead, set `BACKEND_API_URL` in an override file or environment and start only the frontend service with `--no-deps`:
->
-> ```bash
-> docker compose up --no-deps frontend
-> ```
-
-You can also build the images directly with `docker build` (bypassing Compose) and then run them with `docker compose up` — just make sure the image names match those in `docker-compose.yml`:
+If you only need the API server (no frontend):
 
 ```bash
 docker build -t resume-generator-backend ./backend
-docker build -t resume-generator-frontend ./frontend
-docker compose up
+docker run --rm -p 8080:8080 resume-generator-backend
 ```
+
+---
+
+## 📡 API Reference
+
+The backend exposes a small REST API (proxied through the frontend on `/api/*` when running the combined image):
+
+| Method   | Endpoint            | Description                  |
+| -------- | ------------------- | ---------------------------- |
+| `GET`    | `/api/resumes`      | List all saved resumes       |
+| `POST`   | `/api/resumes`      | Create a new resume          |
+| `GET`    | `/api/resumes/{id}` | Get a specific resume        |
+| `PUT`    | `/api/resumes/{id}` | Update a specific resume     |
+| `DELETE` | `/api/resumes/{id}` | Delete a specific resume     |
+| `POST`   | `/api/resume/latex` | Generate LaTeX from a resume |
+| `POST`   | `/api/resume/pdf`   | Generate a PDF from a resume |
+| `GET`    | `/health`           | Health check                 |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Whether it's a new template, a bug fix, or a feature idea:
+
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/my-awesome-template`.
+3. Commit your changes.
+4. Open a Pull Request.
+
+Please keep PRs focused and include a clear description of what and why.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — free to use, modify, and distribute.
+
+---
+
+<div align="center">
+
+**Made with ❤️ for job seekers everywhere.**
+
+⭐ Star this repo if it helped you land your next role!
+
+</div>

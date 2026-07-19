@@ -1,254 +1,81 @@
 {
   "version": 1,
   "template": "enhanced-faang-resume",
-  "name": "Mohammad Ali Ashraf",
-  "title": "Senior Backend Engineer (Go)",
-  "phone": "+92 3000000000",
-  "email": "info@alidevhere.com",
-  "linkedin": "alidevhere",
-  "github": "alidevhere",
-  "website": "alidevhere.com",
-  "summary": "Senior Backend Engineer with 5+ years of experience designing, building, and scaling **distributed systems**, **microservices**, **REST APIs**, and **gRPC services** in **Go**. Experienced in **cloud-native backend development** using **AWS**, **Docker**, **Kubernetes**, **MySQL**, **MongoDB**, and **Redis**, with a strong focus on **performance optimization**, **system reliability**, and **scalable software architecture** across production telecom and contact-center platforms.",
+  "name": "Jane Doe",
+  "title": "Senior Software Engineer",
+  "phone": "+1 (555) 123-4567",
+  "email": "jane.doe@example.com",
+  "linkedin": "jane-doe",
+  "github": "janedoe",
+  "website": "janedoe.dev",
+  "summary": "Senior Software Engineer with 6+ years of experience building **scalable web applications**, **distributed systems**, and **developer-friendly APIs**. Passionate about **clean architecture**, **performance optimization**, and **mentorship**.",
 
   "skills": [
     {
-      "title": "Core",
-      "items": [
-        "Golang",
-        "Python",
-        "REST APIs",
-        "gRPC",
-        "Microservices",
-        "Concurrent Programming",
-        "System Design",
-        "API Design"
-      ]
+      "title": "Languages",
+      "items": ["Go", "TypeScript", "Python", "SQL"]
     },
     {
-      "title": "Databases",
-      "items": [
-        "MySQL",
-        "PostgreSQL",
-        "MongoDB",
-        "Redis",
-        "SQL Optimization"
-      ]
+      "title": "Backend",
+      "items": ["REST APIs", "gRPC", "Microservices", "PostgreSQL", "Redis"]
     },
     {
-      "title": "Cloud & Infrastructure",
-      "items": [
-        "AWS",
-        "GCP",
-        "Cloud-native Architecture"
-      ]
-    },
-    {
-      "title": "Containers & Orchestration",
-      "items": [
-        "Docker",
-        "Kubernetes",
-        "Docker Compose",
-        "ECS"
-      ]
-    },
-    {
-      "title": "DevOps & CI/CD",
-      "items": [
-        "GitHub Actions",
-        "CI/CD Pipelines",
-        "Git",
-        "Linux"
-      ]
-    },
-    {
-      "title": "Frameworks & Tools",
-      "items": [
-        "Echo",
-        "GORM"
-      ]
-    },
-    {
-      "title": "Observability & Quality",
-      "items": [
-        "Unit Testing",
-        "Performance Profiling",
-        "Debugging",
-        "Structured Logging"
-      ]
+      "title": "Cloud & DevOps",
+      "items": ["AWS", "Docker", "Kubernetes", "GitHub Actions"]
     }
   ],
 
   "experience": [
     {
-      "company": "Contact Center Specialists",
-      "title": "Senior Backend Engineer (Golang)",
-      "location": "Remote",
-      "start": "Apr 2023",
-      "end": "Present",
-      "bullets": [
-        "Led the **architecture, design, and implementation** of **scalable backend microservices** in **Go**, translating business requirements into **distributed systems** exposed through **REST** and **gRPC APIs**.",
-        "Architected a **multi-database data layer strategy** combining **MongoDB** and **MySQL** to support **high-throughput, low-latency** campaign and ASR workloads.",
-        "Conducted **architecture and code reviews** across Go services, promoting **coding standards**, **maintainability**, and **production readiness**.",
-        "Designed **scalable backend architectures** by evaluating technical trade-offs and proposing **maintainable solutions** for new platform capabilities.",
-        "Acted as a primary escalation point for **production incidents** in Golang services, driving **root-cause analysis** and cross-team triage with focus on **SLA compliance**.",
-        "Mentored junior backend engineers on **system design**, task scoping, and **Golang best practices** while collaborating with QA and frontend teams to improve **API quality** and **integration reliability**."
-      ]
-    },
-    {
-      "company": "Contact Center Specialists",
-      "title": "Software Engineer (Golang)",
-      "location": "Remote",
-      "start": "Apr 2022",
-      "end": "Mar 2023",
-      "bullets": [
-        "Designed and implemented reliable **REST APIs** in **Golang** using **clean architecture principles** to support seamless front-end integration and **microservice communication**.",
-        "Identified and resolved critical issues in the **outbound call generation service** built in **Golang** on top of **FreeSwitch**, resulting in a **15%** increase in call success rates and **improved system reliability**.",
-        "Replaced a **legacy monolithic service** with a **resilient, high-performance microservice** built in **Golang** on top of **FreeSwitch**, improving **request processing time by 52%** and **system throughput**.",
-        "Improved **application observability** by enhancing **structured logging** across Go services, reducing **issue detection time by 73.33%** and **enabling faster root-cause analysis**.",
-        "Designed and implemented a **critical high-availability service** in **Golang** for an **automated speech recognition** (ASR) system, handling **high-concurrency workloads** in production campaigns."
-      ]
-    },
-    {
-      "company": "Contact Center Specialists",
-      "title": "Associate Software Engineer (Golang)",
+      "company": "Acme Corp",
+      "title": "Senior Software Engineer",
       "location": "Remote",
       "start": "Jan 2022",
-      "end": "Mar 2022",
+      "end": "Present",
       "bullets": [
-        "Identified **performance bottlenecks** in Go services through **profiling** and **debugging**, improving system responsiveness and **code maintainability**.",
-        "Documented **system architecture**, **API specifications**, and development workflows to ensure **clarity, consistency**, and **knowledge transfer** across teams.",
-        "Developed new **backend services** in **Golang** following **Clean Architecture principles**, improving **modularity**, **testability**, and **long-term maintainability**.",
-        "Maintained **production Golang services** through **monitoring**, **troubleshooting**, **performance tuning**, and **feature enhancements**, ensuring **99%+ uptime** and **system reliability**."
-      ]
-    },
-    {
-      "company": "Upwork",
-      "title": "Freelance Software Engineer",
-      "location": "Remote",
-      "start": "Dec 2020",
-      "end": "Jan 2022",
-      "bullets": [
-        "Designed and developed a full-stack **Learning Management System** using **Django**, **Python**, **MySQL**, and **Bootstrap**, serving **grading**, **course management**, and **student engagement** features.",
-        "Implemented **automated CI/CD pipelines** using **GitHub Actions** for **testing** and **deployment**, reducing **release cycle time** and **manual errors**.",
-        "Containerized applications using **Docker Compose** and deployed **production workloads** on **Linux-based Linode VPS servers**, ensuring **scalability** and **reliability**.",
-        "Wrote **bash** and **Python** automation scripts for **infrastructure management** and **deployment orchestration** on Linode VPS, improving **operational efficiency**."
+        "Led the **design and implementation** of a **microservices platform** in **Go** serving **10M+ daily requests** with **99.9% uptime**.",
+        "Mentored a team of **4 engineers** and drove **code review standards** that reduced production incidents by **30%**."
       ]
     }
   ],
 
   "openSourceContributions": [
     {
-      "name": "Gorm",
-      "description": "orm for golang",
+      "name": "Popular CLI Tool",
+      "description": "A widely-used command-line utility for developers",
       "role": "Contributor",
-      "contribution": "Fixed **PostgreSQL identifier length handling** in GORM, improving compatibility with **PostgreSQL naming constraints** and enabling support for **long table/column names**.",
-      "link": "https://github.com/go-gorm/gorm/pull/6337/files",
-      "repoLink": "https://github.com/go-gorm/gorm",
-      "stars": "39.9k",
-      "keywords": []
-    },
-    {
-      "name": "Go GitHub",
-      "description": "github sdk in golang",
-      "role": "Contributor",
-      "contribution": "Added **GitHub Actions cache API support** to the official Go SDK with **comprehensive end-to-end API coverage**, **unit tests**, and **integration tests**, improving cache management capabilities for CI/CD workflows.",
-      "link": "https://github.com/google/go-github/pull/2604/files",
-      "repoLink": "https://github.com/google/go-github",
-      "stars": "11.3k",
-      "keywords": []
-    },
-    {
-      "name": "Postgres GORM Driver",
-      "description": "gorm postgresql driver",
-      "role": "Contributor",
-      "contribution": "Contributed to fixing **PostgreSQL SQL identifier length constraints**, ensuring compatibility with **PostgreSQL naming standards** and enabling seamless **database schema management**.",
-      "link": "https://github.com/go-gorm/postgres/pull/120",
-      "repoLink": "https://github.com/go-gorm/postgres",
-      "stars": "293",
-      "keywords": []
-    },
-    {
-      "name": "Larry",
-      "description": "twitter bot written in golang",
-      "role": "Contributor",
-      "contribution": "Contributed a feature for displaying **repository creation dates** in tweet metadata, enhancing **GitHub repository insights** in social media integration.",
-      "link": "https://github.com/ezeoleaf/larry/pull/122/files",
-      "repoLink": "https://github.com/ezeoleaf/larry",
-      "stars": "170",
-      "keywords": []
-    },
-    {
-      "name": "CSV Column Extractor",
-      "description": "golang package to manipulate CSV files.",
-      "role": "Maintainer",
-      "contribution": "Created and open-sourced a **memory-efficient Go package** for **streaming extraction** of selected columns from **large-scale CSV datasets**, enabling **fast data processing** without loading entire files into memory.",
-      "link": "",
-      "repoLink": "https://github.com/alidevhere/csv-column-extractor",
-      "stars": "2",
-      "keywords": ["golang", "csv", "data processing", "streaming", "memory-efficient"]
+      "contribution": "Added **shell completion support** and **improved error handling** for cross-platform compatibility.",
+      "link": "https://github.com/example/repo/pull/123",
+      "repoLink": "https://github.com/example/repo",
+      "stars": "12.5k",
+      "keywords": ["go", "cli", "developer-tools"]
     }
   ],
 
   "projects": [
     {
-      "name": "Swipe Shop",
-      "link": "https://github.com/alidevhere/swipe-shop",
-      "technologies": [
-        "Golang",
-        "React",
-        "MongoDB",
-        "PostgreSQL"
-      ],
+      "name": "TaskFlow",
+      "link": "https://github.com/janedoe/taskflow",
+      "technologies": ["Go", "React", "PostgreSQL"],
       "bullets": [
-        "Built a **microservices-based** e-commerce platform with **advanced product discovery**, **real-time inventory management**, and **scalable catalog services**.",
-        "Designed **RESTful APIs** and **backend services** for **order management**, **payment processing**, and **shopping workflows**, ensuring **transaction reliability** and **data consistency**."
-      ]
-    },
-    {
-      "name": "Al Tawhid",
-      "link": "https://github.com/alidevhere/Al-Tawheed",
-      "technologies": [
-        "Python",
-        "Django",
-        "MySQL"
-      ],
-      "bullets": [
-        "Developed a comprehensive **Learning Management System (LMS)** with **automated grading**, **e-library management**, **progress tracking**, and **certificate verification** features.",
-        "Built **role-based access control**, **user authentication**, and **admin dashboards**, delivering a complete **learning experience** for **administrators**, **instructors**, and **students**."
-      ]
-    },
-    {
-      "name": "Medicom",
-      "link": "https://github.com/alidevhere/Medicom",
-      "technologies": [
-        "Python",
-        "Django",
-        "Bootstrap",
-        "MySQL"
-      ],
-      "bullets": [
-        "Created a **healthcare e-commerce platform** for medicines with **order management**, **real-time inventory tracking**, **stock notifications**, and **order status updates**.",
-        "Implemented **authentication**, **user accounts**, **payment integration**, and **inventory management** systems, delivering a **secure and intuitive** ordering experience."
+        "Built a **real-time task management app** with **collaborative boards** and **offline-first sync**."
       ]
     }
   ],
 
   "certifications": [
     {
-      "name": "AWS Certified Developer Associate"
-    },
-    {
-      "name": "Azure Fundamentals (AZ-900)"
+      "name": "AWS Certified Solutions Architect - Associate"
     }
   ],
 
   "education": [
     {
-      "school": "University of Engineering and Technology, Lahore",
-      "degree": "Bachelor of Science in Computer Science",
-      "location": "Lahore, Pakistan",
-      "start": "2018",
-      "end": "2022"
+      "school": "State University",
+      "degree": "B.S. in Computer Science",
+      "location": "Anytown, USA",
+      "start": "2014",
+      "end": "2018"
     }
   ]
 }

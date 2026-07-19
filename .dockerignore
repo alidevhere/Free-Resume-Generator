@@ -35,3 +35,6 @@ frontend/src-tauri/gen
 # Local data (do not bake host DB into the image)
 backend/data
 data
+
+# Documentation assets (screenshots for README, not needed in the image)
+media
