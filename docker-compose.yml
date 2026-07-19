@@ -1,5 +1,6 @@
 services:
   backend:
+    image: resume-generator-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -7,6 +8,7 @@ services:
       - "8080"
 
   frontend:
+    image: resume-generator-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile

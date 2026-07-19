@@ -37,6 +37,8 @@ type ToastState = {
   message: string;
 } | null;
 
+type DownloadFormat = "pdf" | "latex" | "json";
+
 export function ResumeEditor({ resumeId }: Props) {
   const router = useRouter();
   const [recordId, setRecordId] = useState<number | null>(resumeId);
@@ -50,6 +52,7 @@ export function ResumeEditor({ resumeId }: Props) {
   const [toast, setToast] = useState<ToastState>(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+  const [downloadFormat, setDownloadFormat] = useState<DownloadFormat>("pdf");
 
   const initialize = useCallback(async () => {
     try {
@@ -240,6 +243,28 @@ export function ResumeEditor({ resumeId }: Props) {
     }
   }
 
+  function handleDownloadJson() {
+    const payload = {
+      name: recordName.trim() || "Untitled Resume",
+      resume,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    downloadBlob(blob, "resume.json");
+    setToast({ tone: "success", message: "JSON downloaded successfully." });
+  }
+
+  async function handleDownload() {
+    if (downloadFormat === "pdf") {
+      await handleDownloadPdf();
+    } else if (downloadFormat === "latex") {
+      await handleDownloadLatex();
+    } else {
+      handleDownloadJson();
+    }
+  }
+
   const previewHref = useMemo(() => previewUrl || "#", [previewUrl]);
 
   if (loading) {
@@ -306,6 +331,27 @@ export function ResumeEditor({ resumeId }: Props) {
               >
                 Build and Preview
               </Button>
+              <div className="download-group">
+                <select
+                  id="downloadFormat"
+                  value={downloadFormat}
+                  onChange={(e) =>
+                    setDownloadFormat(e.target.value as DownloadFormat)
+                  }
+                  aria-label="Download format"
+                >
+                  <option value="pdf">PDF</option>
+                  <option value="latex">LaTeX</option>
+                  <option value="json">JSON</option>
+                </select>
+                <Button
+                  variant="success"
+                  onClick={() => void handleDownload()}
+                  disabled={building}
+                >
+                  Download
+                </Button>
+              </div>
             </div>
 
             <div className="resume-meta-bar">
@@ -736,23 +782,6 @@ export function ResumeEditor({ resumeId }: Props) {
                 )}
               />
             </SectionShell>
-
-            <div className="action-buttons">
-              <Button
-                variant="success"
-                onClick={() => void handleDownloadPdf()}
-                disabled={building}
-              >
-                Download PDF
-              </Button>
-              <Button
-                variant="slate"
-                onClick={() => void handleDownloadLatex()}
-                disabled={building}
-              >
-                Download LaTeX
-              </Button>
-            </div>
           </div>
         </aside>
       </div>

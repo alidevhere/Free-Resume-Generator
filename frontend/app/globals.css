@@ -60,6 +60,13 @@ body {
   gap: 12px;
 }
 
+.library-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .resume-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -206,7 +213,38 @@ body {
   padding: 12px;
   margin: -20px -20px 18px;
   display: flex;
-  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.build-bar .btn {
+  height: 38px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.download-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.download-group select {
+  width: auto;
+  min-width: 90px;
+  margin-bottom: 0;
+  padding: 0 10px;
+  height: 38px;
+  font-size: 0.9rem;
+  line-height: 1.2;
 }
 
 .resume-meta-bar {
@@ -486,6 +524,11 @@ textarea {
   .action-buttons,
   .library-actions {
     flex-direction: column;
+  }
+
+  .download-group {
+    margin-left: 0;
+    width: 100%;
   }
 
   .two-column {

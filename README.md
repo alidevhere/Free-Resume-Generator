@@ -194,3 +194,55 @@ If you only need the API server (no frontend), build the backend image directly:
 docker build -t resume-generator ./backend
 docker run --rm -p 8080:8080 resume-generator
 ```
+
+### Build Individual Images and Run with Docker Compose
+
+The `docker-compose.yml` defines two services — `backend` (image `resume-generator-backend`) and `frontend` (image `resume-generator-frontend`) — that are wired together over the compose network (the frontend talks to the backend at `http://backend:8080`).
+
+You can build either image independently and then bring the stack up with `docker compose`. Compose will reuse the image you built instead of rebuilding it.
+
+**Build only the backend image:**
+
+```bash
+docker compose build backend
+```
+
+**Build only the frontend image:**
+
+```bash
+docker compose build frontend
+```
+
+**Build both images:**
+
+```bash
+docker compose build
+```
+
+**Run the stack (uses the images built above):**
+
+```bash
+docker compose up
+```
+
+Open `http://localhost:3000` in your browser. The frontend is published on port `3000` and proxies API calls to the backend service.
+
+If you only want to run a single service (e.g. just the frontend, assuming the backend is already running or reachable elsewhere), use:
+
+```bash
+docker compose up frontend
+```
+
+> Note: the `frontend` service declares `depends_on: [backend]`, so `docker compose up frontend` will also start the backend. To run the frontend against an external backend instead, set `BACKEND_API_URL` in an override file or environment and start only the frontend service with `--no-deps`:
+>
+> ```bash
+> docker compose up --no-deps frontend
+> ```
+
+You can also build the images directly with `docker build` (bypassing Compose) and then run them with `docker compose up` — just make sure the image names match those in `docker-compose.yml`:
+
+```bash
+docker build -t resume-generator-backend ./backend
+docker build -t resume-generator-frontend ./frontend
+docker compose up
+```
