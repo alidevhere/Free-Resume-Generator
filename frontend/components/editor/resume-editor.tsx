@@ -18,6 +18,7 @@ import {
   Certification,
   Education,
   Experience,
+  OpenSourceContribution,
   Project,
   Resume,
   SkillCategory,
@@ -116,6 +117,7 @@ export function ResumeEditor({ resumeId }: Props) {
       projects: record.resume.projects || [],
       skills: record.resume.skills || [],
       certifications: record.resume.certifications || [],
+      openSourceContributions: record.resume.openSourceContributions || [],
       sectionOrder: record.resume.sectionOrder?.length
         ? record.resume.sectionOrder
         : [...DEFAULT_SECTION_ORDER],
@@ -128,7 +130,13 @@ export function ResumeEditor({ resumeId }: Props) {
   }
 
   function patchList<T>(
-    key: "experience" | "education" | "projects" | "skills" | "certifications",
+    key:
+      | "experience"
+      | "education"
+      | "projects"
+      | "skills"
+      | "certifications"
+      | "openSourceContributions",
     updater: (items: T[]) => T[],
   ) {
     setResume((current) => ({
@@ -631,6 +639,127 @@ export function ResumeEditor({ resumeId }: Props) {
                           }
                         />
                       </div>
+                    </div>
+                  </>
+                )}
+              />
+            </SectionShell>
+
+            <SectionShell title="Open Source Contributions">
+              <ItemListEditor<OpenSourceContribution>
+                items={resume.openSourceContributions}
+                addLabel="Add Contribution"
+                onAdd={() =>
+                  patchList<OpenSourceContribution>(
+                    "openSourceContributions",
+                    (items) => [
+                      ...items,
+                      {
+                        name: "",
+                        description: "",
+                        role: "",
+                        contribution: "",
+                        link: "",
+                        repoLink: "",
+                        stars: "",
+                        keywords: [],
+                      },
+                    ],
+                  )
+                }
+                onRemove={(index) =>
+                  patchList<OpenSourceContribution>(
+                    "openSourceContributions",
+                    (items) => items.filter((_, i) => i !== index),
+                  )
+                }
+                onChangeItem={(index, value) =>
+                  patchList<OpenSourceContribution>(
+                    "openSourceContributions",
+                    (items) =>
+                      items.map((item, i) => (i === index ? value : item)),
+                  )
+                }
+                renderItem={(item, _index, onChange) => (
+                  <>
+                    <div className="form-group">
+                      <label>Project Name</label>
+                      <input
+                        value={item.name}
+                        onChange={(e) =>
+                          onChange({ ...item, name: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <input
+                        value={item.description}
+                        onChange={(e) =>
+                          onChange({ ...item, description: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="two-column">
+                      <div className="form-group">
+                        <label>Role</label>
+                        <input
+                          value={item.role}
+                          onChange={(e) =>
+                            onChange({ ...item, role: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Stars</label>
+                        <input
+                          value={item.stars}
+                          onChange={(e) =>
+                            onChange({ ...item, stars: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Contribution</label>
+                      <textarea
+                        value={item.contribution}
+                        onChange={(e) =>
+                          onChange({ ...item, contribution: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="two-column">
+                      <div className="form-group">
+                        <label>Project Link</label>
+                        <input
+                          value={item.link}
+                          onChange={(e) =>
+                            onChange({ ...item, link: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Repo Link</label>
+                        <input
+                          value={item.repoLink}
+                          onChange={(e) =>
+                            onChange({ ...item, repoLink: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Keywords (comma-separated)</label>
+                      <input
+                        value={joinCsv(item.keywords)}
+                        onChange={(e) =>
+                          onChange({
+                            ...item,
+                            keywords: splitCsv(e.target.value),
+                          })
+                        }
+                      />
                     </div>
                   </>
                 )}
