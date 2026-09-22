@@ -196,6 +196,7 @@ func renderResume(inputPath, templatePath, outputDir string) error {
 		"md":          markdownToLatex,
 		"profileLink": normalizeProfileLink,
 		"phoneLink":   normalizePhoneLink,
+		"hasSkills":   hasSkillItems,
 		"sectionBlock": func(name string, r Resume) (string, error) {
 			var buf bytes.Buffer
 			if execErr := tpl.ExecuteTemplate(&buf, "section_"+name, r); execErr != nil {
@@ -372,6 +373,16 @@ func normalizePhoneLink(value string) string {
 
 	replacer := strings.NewReplacer(" ", "", "-", "", "(", "", ")", "")
 	return "tel:" + replacer.Replace(value)
+}
+
+// hasSkillItems reports whether any skill category has at least one item.
+func hasSkillItems(categories []SkillCategory) bool {
+	for _, category := range categories {
+		if len(category.Items) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func renderPDF(outputDir string) error {

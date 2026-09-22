@@ -81,11 +81,13 @@
 {{end}}
 
 {{define "section_skills"}}
-{{if .Skills}}
+{{if hasSkills .Skills}}
 \section{Technical Skills}
 \resumeItemListStart
 {{- range .Skills}}
+{{- if .Items}}
 \item {\fontsize{10pt}{12pt}\selectfont \textbf{ {{md .Title}} }: {{range $index, $item := .Items}}{{if $index}}, {{end}}{{md $item}}{{end}} }
+{{- end}}
 {{- end}}
 \end{itemize}
 {{end}}

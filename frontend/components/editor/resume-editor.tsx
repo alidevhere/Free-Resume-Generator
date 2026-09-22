@@ -13,7 +13,7 @@ import {
   createEmptyResume,
   DEFAULT_SECTION_ORDER,
 } from "@/lib/resume-defaults";
-import { joinCsv, joinMultiline, splitCsv, splitMultiline } from "@/lib/format";
+import { joinMultiline, splitMultiline } from "@/lib/format";
 import {
   Certification,
   Education,
@@ -24,6 +24,7 @@ import {
   SkillCategory,
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { CsvInput } from "@/components/ui/csv-input";
 import { ItemListEditor } from "@/components/editor/item-list-editor";
 import { SectionOrderEditor } from "@/components/editor/section-order-editor";
 import { SectionShell } from "@/components/editor/section-shell";
@@ -751,14 +752,9 @@ export function ResumeEditor({ resumeId }: Props) {
                     </div>
                     <div className="form-group">
                       <label>Keywords (comma-separated)</label>
-                      <input
-                        value={joinCsv(item.keywords)}
-                        onChange={(e) =>
-                          onChange({
-                            ...item,
-                            keywords: splitCsv(e.target.value),
-                          })
-                        }
+                      <CsvInput
+                        values={item.keywords}
+                        onChange={(keywords) => onChange({ ...item, keywords })}
                       />
                     </div>
                   </>
@@ -808,13 +804,10 @@ export function ResumeEditor({ resumeId }: Props) {
                     </div>
                     <div className="form-group">
                       <label>Technologies (comma-separated)</label>
-                      <input
-                        value={joinCsv(item.technologies)}
-                        onChange={(e) =>
-                          onChange({
-                            ...item,
-                            technologies: splitCsv(e.target.value),
-                          })
+                      <CsvInput
+                        values={item.technologies}
+                        onChange={(technologies) =>
+                          onChange({ ...item, technologies })
                         }
                       />
                     </div>
@@ -868,11 +861,9 @@ export function ResumeEditor({ resumeId }: Props) {
                     </div>
                     <div className="form-group">
                       <label>Items (comma-separated)</label>
-                      <input
-                        value={joinCsv(item.items)}
-                        onChange={(e) =>
-                          onChange({ ...item, items: splitCsv(e.target.value) })
-                        }
+                      <CsvInput
+                        values={item.items}
+                        onChange={(items) => onChange({ ...item, items })}
                       />
                     </div>
                   </>
