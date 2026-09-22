@@ -28,6 +28,17 @@ export type Project = {
   bullets: string[];
 };
 
+export type OpenSourceContribution = {
+  name: string;
+  description: string;
+  role: string;
+  contribution: string;
+  link: string;
+  repoLink: string;
+  stars: string;
+  keywords: string[];
+};
+
 export type SkillCategory = {
   title: string;
   items: string[];
@@ -53,7 +64,7 @@ export type Resume = {
   experience: Experience[];
   projects: Project[];
   education: Education[];
-  openSourceContributions: unknown[];
+  openSourceContributions: OpenSourceContribution[];
   certifications: Certification[];
 };
 
